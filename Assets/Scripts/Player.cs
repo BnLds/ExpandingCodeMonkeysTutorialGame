@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
             inputVector2.x = +1;
         }
 
+        inputVector2 = inputVector2.normalized;
         Vector3 inputVector3 = new Vector3(inputVector2.x, 0, inputVector2.y);
         transform.position += inputVector3 * movementSpeed * Time.deltaTime;
     }
