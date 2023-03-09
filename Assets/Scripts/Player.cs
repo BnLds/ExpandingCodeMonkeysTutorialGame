@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] 
+    private float movementSpeed = 7f;
     private void Update()
     {
         #region Variables
@@ -33,6 +35,6 @@ public class Player : MonoBehaviour
         }
 
         Vector3 inputVector3 = new Vector3(inputVector2.x, 0, inputVector2.y);
-        transform.position += inputVector3 * Time.deltaTime;
+        transform.position += inputVector3 * movementSpeed * Time.deltaTime;
     }
 }
