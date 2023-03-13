@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [SerializeField] 
     private float movementSpeed = 7f;
+
+    private bool isWalking;
     private void Update()
     {
         #region Variables
@@ -38,9 +40,15 @@ public class Player : MonoBehaviour
 
         Vector3 moveDirection = new Vector3(inputVector2.x, 0, inputVector2.y);
         transform.position += moveDirection * movementSpeed * Time.deltaTime;
-
+        isWalking = moveDirection != Vector3.zero;
+ 
         float rotateSpeed = 10f;
         transform.forward = Vector3.Slerp(transform.forward,moveDirection, Time.deltaTime * rotateSpeed);
 
+    }
+
+    public bool IsWalking()
+    {
+        return isWalking;
     }
 }
