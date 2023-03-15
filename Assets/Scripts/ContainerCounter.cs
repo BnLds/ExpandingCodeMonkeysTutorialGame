@@ -10,10 +10,19 @@ public class ContainerCounter : BaseCounter
 
     public override void Interact(PlayerController player)
     {
-        Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
-        kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(player);
+        if(!player.HasKitchenObject())
+        {
+            //player is carrying nothing 
+            Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
+            kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(player);
 
-        OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
+            OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
+        }
+        else
+        {
+            //player is carrying something 
+
+        }
     }
 
 }

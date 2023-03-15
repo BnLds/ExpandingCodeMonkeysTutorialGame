@@ -8,7 +8,32 @@ public class ClearCounter : BaseCounter
 
     public override void Interact(PlayerController player)
     {
-
+        if(!HasKitchenObject())
+        {
+            //There is no kitchen object here
+            if(player.HasKitchenObject())
+            {
+                //Player is carrying something
+                player.GetKitchenObject().SetKitchenObjectParent(this);  
+            }
+            else
+            {
+                //player not carrying anything
+            }
+        }
+        else
+        {
+            //There is a kitchen object here
+            if(player.HasKitchenObject())
+            {
+                //Player is carrying something
+            }
+            else
+            {
+                //player is not carrying anything
+                GetKitchenObject().SetKitchenObjectParent(player);
+            }
+        }
     }
 
 }
