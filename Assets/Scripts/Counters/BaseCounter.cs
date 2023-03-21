@@ -6,6 +6,12 @@ using UnityEngine;
 public class BaseCounter : MonoBehaviour, IKitchenObjectParent
 {
     public static event EventHandler OnAnyObjectObjectPlacedHere;
+
+    public static void ResetStaticData()
+    {
+        OnAnyObjectObjectPlacedHere = null;
+    }
+
     [SerializeField] private Transform counterTopPoint;
 
     private KitchenObject kitchenObject;
@@ -14,10 +20,12 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
     {
         Debug.LogError("BaseCounter.Interact();");
     }
+
     public  virtual void InteractAlternate(PlayerController player)
     {
         //Debug.LogError("BaseCounter.InteractAlternate();");
     }
+    
     public Transform GetKitchenObjectFollowTransform()
     {
         return counterTopPoint;

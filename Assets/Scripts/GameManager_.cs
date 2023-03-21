@@ -87,8 +87,6 @@ public class GameManager_ : MonoBehaviour
             case State.GameOver:
                 break;
         }
-
-        Debug.Log(state);
     }
 
     public bool IsGamePlaying()
@@ -116,7 +114,7 @@ public class GameManager_ : MonoBehaviour
         return (1 - gamePlayingTimer/gamePlayingTimerMax);
     }
 
-    private void TogglePauseGame()
+    public void TogglePauseGame()
     {
         isGamePaused = !isGamePaused;
         if(isGamePaused)

@@ -1,18 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class GamePausedUI : MonoBehaviour
 {
-   
+   [SerializeField] private Button resumeButton;
+   [SerializeField] private Button mainMenuButton;
+
+    private void Awake()
+   {
+        mainMenuButton.onClick.AddListener(() => 
+        {
+            Loader.Load(Loader.Scene.MainMenuScene);
+        });
+
+        resumeButton.onClick.AddListener(() => 
+        {
+            GameManager_.Instance.TogglePauseGame();
+        });
+
+   }
+
    private void Start()
    {
         GameManager_.Instance.OnGamePaused += GameManager_OnGamePaused;
         GameManager_.Instance.OnGameUnpaused += GameManager_OnGameUnpaused;
-        
-        Hide();
 
+        Hide();
    }
+
+   
 
     private void Show()
     {
