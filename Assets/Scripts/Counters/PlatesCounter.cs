@@ -9,26 +9,35 @@ public class PlatesCounter : BaseCounter
     public event EventHandler OnPlateRemoved;
 
     [SerializeField] private KitchenObjectSO plateKitchenObjectSO;
-    private float spawnPlateTimer;
+    private float spawnPlateTimer = 4f;
     private float spawnPlateTimerMax = 4f;
     private int plateSpawnedAmount;
     private int platesSpawnedAmountMax = 4;
 
+
     private void Update()
     {
-        spawnPlateTimer += Time.deltaTime;
-        if(spawnPlateTimer > spawnPlateTimerMax)
+        if(GameManager_.Instance.IsGamePlaying())
         {
-            spawnPlateTimer = 0f;
-
-            if(GameManager_.Instance.IsGamePlaying() && plateSpawnedAmount < platesSpawnedAmountMax)
+            spawnPlateTimer += Time.deltaTime;
+            if(spawnPlateTimer > spawnPlateTimerMax)
             {
-                plateSpawnedAmount ++;
+                spawnPlateTimer = 0f;
 
-                OnPlateSpawned?.Invoke(this, EventArgs.Empty);
+                if(plateSpawnedAmount < platesSpawnedAmountMax)
+                {
+                    plateSpawnedAmount ++;
+
+                    OnPlateSpawned?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
         
+    }
+
+    private void GameManager_OnGameStart(object sender, EventArgs e)
+    {
+        spawnPlateTimer = 4f;
     }
 
     public override void Interact(PlayerController player)
