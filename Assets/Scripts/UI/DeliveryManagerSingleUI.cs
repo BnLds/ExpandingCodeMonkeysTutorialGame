@@ -8,7 +8,8 @@ public class DeliveryManagerSingleUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI recipeNameText;
     [SerializeField] private Transform iconContainer; 
-    [SerializeField] private Transform iconTemplate; 
+    [SerializeField] private Transform iconTemplate;
+    [SerializeField] private TextMeshProUGUI recipeValueText;
 
     private void Awake()
     {
@@ -18,6 +19,7 @@ public class DeliveryManagerSingleUI : MonoBehaviour
     public void SetRecipeSO(RecipeSO recipeSO)
     {
         recipeNameText.text = recipeSO.recipeName;
+        recipeValueText.text = "$" + recipeSO.recipeSellValue.ToString();
 
         foreach (Transform child in iconContainer)
         {

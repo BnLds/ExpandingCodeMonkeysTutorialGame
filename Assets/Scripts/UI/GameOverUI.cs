@@ -6,6 +6,8 @@ using UnityEngine;
 public class GameOverUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI recipesDeliveredText; 
+    [SerializeField] private TextMeshProUGUI totalSalesValueText; 
+
 
     private void Start()
     {
@@ -24,6 +26,7 @@ public class GameOverUI : MonoBehaviour
             Show();
             
             recipesDeliveredText.text = DeliveryManager.Instance.GetSuccessfulRecipesAmount().ToString();
+            totalSalesValueText.text = "$" + DeliveryManager.Instance.GetTotalSalesValue().ToString();
 
         }
         else

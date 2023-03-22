@@ -17,3 +17,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 079d6dd596f6f564492870a0fb133d65, type: 2}
   - {fileID: 11400000, guid: c90cba9f783a4494fa706905a6109f03, type: 2}
   recipeName: CheeseBurger
+  recipeSellValue: 12

@@ -19,6 +19,7 @@ public class DeliveryManager : MonoBehaviour
     private float spawnRecipeTimerMax = 4f;
     private int waitingRecipesMax = 4;
     private int successfulRecipesAmount;
+    private int totalSalesValue = 0;
 
     private void Awake()
     {
@@ -37,6 +38,7 @@ public class DeliveryManager : MonoBehaviour
 
                 if(waitingRecipeSOList.Count < waitingRecipesMax)
                 {
+                    // Spawn recipe
                     RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
                     waitingRecipeSOList.Add(waitingRecipeSO);
 
@@ -83,6 +85,7 @@ public class DeliveryManager : MonoBehaviour
                     //Player delivered the correct recipe
 
                     successfulRecipesAmount ++;
+                    totalSalesValue += waitingRecipeSO.recipeSellValue;
 
                     waitingRecipeSOList.RemoveAt(i);
 
@@ -107,6 +110,11 @@ public class DeliveryManager : MonoBehaviour
     public int GetSuccessfulRecipesAmount()
     {
         return successfulRecipesAmount;
+    }
+
+    public int GetTotalSalesValue()
+    {
+        return totalSalesValue;
     }
 
 }
