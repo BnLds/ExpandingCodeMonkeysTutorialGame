@@ -122,7 +122,8 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
 
             //attempt only X movement
             Vector3 moveDirectionX = new Vector3(moveDirection.x, 0, 0).normalized;
-            canMove = moveDirection.x != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight ,playerRadius, moveDirectionX, moveDistance);
+            //Test if there is an input on x greater than .5f so it doesn't switch to diagonal moves too quickly with gamepads 
+            canMove = (moveDirection.x < - .5f || moveDirection.x > +.5f) && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight ,playerRadius, moveDirectionX, moveDistance);
 
             if(canMove)
             {
@@ -134,7 +135,8 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
                 //Cannot move only on the X
                 //Attempt only Z movement
                 Vector3 moveDirectionZ = new Vector3(0, 0, moveDirection.z).normalized;
-                canMove = moveDirection.z != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight ,playerRadius, moveDirectionZ, moveDistance);
+                //Test if there is an input on z greater than .5f so it doesn't switch to diagonal moves too quickly with gamepads 
+                canMove = (moveDirection.z < - .5f || moveDirection.z > +.5f) && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight ,playerRadius, moveDirectionZ, moveDistance);
 
                 if(canMove)
                 {
