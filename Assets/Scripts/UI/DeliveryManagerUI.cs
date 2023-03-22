@@ -7,6 +7,7 @@ public class DeliveryManagerUI : MonoBehaviour
 {
     [SerializeField] private Transform container;
     [SerializeField] private Transform recipeTemplate;
+    [SerializeField] private TMPro.TextMeshProUGUI currentSalesValueText;
 
     private void Awake()
     {
@@ -51,5 +52,7 @@ public class DeliveryManagerUI : MonoBehaviour
             recipeTransform.gameObject.SetActive(true);
             recipeTransform.GetComponent<DeliveryManagerSingleUI>().SetRecipeSO(recipeSO);
         }
+
+        currentSalesValueText.text = "CURRENT SALES:\n$" + DeliveryManager.Instance.GetTotalSalesValue().ToString();
     }
 }
