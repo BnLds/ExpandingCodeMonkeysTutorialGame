@@ -16,7 +16,6 @@ public class GameInput : MonoBehaviour
     public event EventHandler OnPauseAction;
     public event EventHandler OnBindingRebind;
 
-
     public enum Binding
     {
         Move_Up,
@@ -38,19 +37,21 @@ public class GameInput : MonoBehaviour
     {
         Instance = this;
 
-       playerInputActions = new PlayerInputActions();
+        playerInputActions = new PlayerInputActions();
 
         if(PlayerPrefs.HasKey(PLAYER_PREFS_BINDINGS))
-       {
+        {
             playerInputActions.LoadBindingOverridesFromJson(PlayerPrefs.GetString(PLAYER_PREFS_BINDINGS));
-       }
+        }
 
-       playerInputActions.Player.Enable();      
+        playerInputActions.Player.Enable();      
 
-       playerInputActions.Player.Interact.performed += Interact_Performed;
-       playerInputActions.Player.InteractAlternate.performed += InteractAlternate_Performed;
-       playerInputActions.Player.Pause.performed += Pause_Performed;      
+        playerInputActions.Player.Interact.performed += Interact_Performed;
+        playerInputActions.Player.InteractAlternate.performed += InteractAlternate_Performed;
+        playerInputActions.Player.Pause.performed += Pause_Performed;
     }
+
+    
 
     private void OnDestroy()
     {
@@ -65,6 +66,7 @@ public class GameInput : MonoBehaviour
     {
         OnPauseAction?.Invoke(this, EventArgs.Empty);
     }
+
     private void InteractAlternate_Performed(InputAction.CallbackContext obj)
     {
         OnInteractAlternateAction?.Invoke(this, EventArgs.Empty);
