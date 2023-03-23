@@ -22,6 +22,13 @@ public class OptionsUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI interactText;
     [SerializeField] private TextMeshProUGUI interactAltText;
     [SerializeField] private TextMeshProUGUI pauseText;
+    [SerializeField] private TextMeshProUGUI moveUpArrowsText;
+    [SerializeField] private TextMeshProUGUI moveDownArrowsText;
+    [SerializeField] private TextMeshProUGUI moveLeftArrowsText;
+    [SerializeField] private TextMeshProUGUI moveRightArrowsText;
+    [SerializeField] private TextMeshProUGUI interactArrowsText;
+    [SerializeField] private TextMeshProUGUI interactAltArrowsText;
+    [SerializeField] private TextMeshProUGUI pauseArrowsText;
     [SerializeField] private TextMeshProUGUI gamepadInteractText;
     [SerializeField] private TextMeshProUGUI gamepadInteractAltText;
     [SerializeField] private TextMeshProUGUI gamepadPauseText;
@@ -33,6 +40,13 @@ public class OptionsUI : MonoBehaviour
     [SerializeField] private Button interactButton;
     [SerializeField] private Button interactAltButton;
     [SerializeField] private Button pauseButton;
+    [SerializeField] private Button moveUpArrowsButton;
+    [SerializeField] private Button moveDownArrowsButton;
+    [SerializeField] private Button moveLeftArrowsButton;
+    [SerializeField] private Button moveRightArrowsButton;
+    [SerializeField] private Button interactArrowsButton;
+    [SerializeField] private Button interactAltArrowsButton;
+    [SerializeField] private Button pauseArrowsButton;
     [SerializeField] private Button gamepadInteractButton;
     [SerializeField] private Button gamepadInteractAltButton;
     [SerializeField] private Button gamepadPauseButton;
@@ -68,13 +82,22 @@ public class OptionsUI : MonoBehaviour
             onCloseButtonAction();
         });
 
-        moveUpButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Up);});
-        moveDownButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Down);});
-        moveLeftButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Left);});
-        moveRightButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Right);});
-        interactButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact);});
-        interactAltButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact_Alt);});
+        moveUpButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Up_WASD);});
+        moveDownButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Down_WASD);});
+        moveLeftButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Left_WASD);});
+        moveRightButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Right_WASD);});
+        interactButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact_WASD);});
+        interactAltButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact_Alt_WASD);});
         pauseButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Pause);});
+
+        moveUpArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Up_Arrows);});
+        moveDownArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Down_Arrows);});
+        moveLeftArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Left_Arrows);});
+        moveRightArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Right_Arrows);});
+        interactArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact_Arrows);});
+        interactAltArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact_Alt_Arrows);});
+        pauseArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Pause);});
+
         gamepadInteractButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Gamepad_Interact);});
         gamepadInteractAltButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Gamepad_Interact_Alternate);});
         gamepadPauseButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Gamepad_Pause);});
@@ -101,13 +124,22 @@ public class OptionsUI : MonoBehaviour
         soundEffectsText.text = "Sound effects: " + Mathf.Round(SoundManager.Instance.GetVolume() * 10f).ToString();
         musicText.text = "Music: " + Mathf.Round(MusicManager.Instance.GetVolume() * 10f).ToString();
 
-        moveUpText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Up);
-        moveDownText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Down);
-        moveLeftText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Left);
-        moveRightText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Right);
-        interactText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Interact);
-        interactAltText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Interact_Alt);
+        moveUpText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Up_WASD);
+        moveDownText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Down_WASD);
+        moveLeftText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Left_WASD);
+        moveRightText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Right_WASD);
+        interactText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Interact_WASD);
+        interactAltText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Interact_Alt_WASD);
         pauseText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Pause);
+
+        moveUpArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Up_Arrows);
+        moveDownArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Down_Arrows);
+        moveLeftArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Left_Arrows);
+        moveRightArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Right_Arrows);
+        interactArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Interact_Arrows);
+        interactAltArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Interact_Alt_Arrows);
+        pauseArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Pause);
+
         gamepadInteractText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_Interact);
         gamepadInteractAltText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_Interact_Alternate);
         gamepadPauseText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_Pause);

@@ -18,12 +18,18 @@ public class GameInput : MonoBehaviour
 
     public enum Binding
     {
-        Move_Up,
-        Move_Down,
-        Move_Left,
-        Move_Right,
-        Interact,
-        Interact_Alt,
+        Move_Up_WASD,
+        Move_Down_WASD,
+        Move_Left_WASD,
+        Move_Right_WASD,
+        Interact_WASD,
+        Interact_Alt_WASD,
+        Move_Up_Arrows,
+        Move_Down_Arrows,
+        Move_Left_Arrows,
+        Move_Right_Arrows,
+        Interact_Arrows,
+        Interact_Alt_Arrows,
         Pause,
         Gamepad_Interact,
         Gamepad_Interact_Alternate,
@@ -89,24 +95,38 @@ public class GameInput : MonoBehaviour
         switch(binding)
         {
             default:
-            case Binding.Interact:
-                return playerInputActions.Player.Interact.bindings[0].ToDisplayString();
-            case Binding.Interact_Alt:
-                return playerInputActions.Player.InteractAlternate.bindings[0].ToDisplayString();
+            case Binding.Interact_WASD:
+                return (playerInputActions.Player.Interact.bindings[0].ToDisplayString());
+            case Binding.Interact_Alt_WASD:
+                return (playerInputActions.Player.InteractAlternate.bindings[0].ToDisplayString());
             case Binding.Pause:
-                return playerInputActions.Player.Pause.bindings[0].ToDisplayString();
-            case Binding.Move_Up:
-                return playerInputActions.Player.Move.bindings[1].ToDisplayString();
-            case Binding.Move_Down:
-                return playerInputActions.Player.Move.bindings[2].ToDisplayString();
-            case Binding.Move_Left:
-                return playerInputActions.Player.Move.bindings[3].ToDisplayString();
-            case Binding.Move_Right:
-                return playerInputActions.Player.Move.bindings[4].ToDisplayString();
+                return (playerInputActions.Player.Pause.bindings[0].ToDisplayString());
+            case Binding.Move_Up_WASD:
+                return (playerInputActions.Player.Move.bindings[1].ToDisplayString());
+            case Binding.Move_Down_WASD:
+                return (playerInputActions.Player.Move.bindings[2].ToDisplayString());
+            case Binding.Move_Left_WASD:
+                return (playerInputActions.Player.Move.bindings[3].ToDisplayString());
+            case Binding.Move_Right_WASD:
+                return (playerInputActions.Player.Move.bindings[4].ToDisplayString());
+
+            case Binding.Interact_Arrows:
+                return (playerInputActions.Player.Interact.bindings[1].ToDisplayString());
+            case Binding.Interact_Alt_Arrows:
+                return (playerInputActions.Player.InteractAlternate.bindings[1].ToDisplayString());
+            case Binding.Move_Up_Arrows:
+                return (playerInputActions.Player.Move.bindings[6].ToDisplayString());
+            case Binding.Move_Down_Arrows:
+                return playerInputActions.Player.Move.bindings[7].ToDisplayString();
+            case Binding.Move_Left_Arrows:
+                return playerInputActions.Player.Move.bindings[8].ToDisplayString();
+            case Binding.Move_Right_Arrows:
+                return playerInputActions.Player.Move.bindings[9].ToDisplayString();
+
             case Binding.Gamepad_Interact:
-                return playerInputActions.Player.Interact.bindings[1].ToDisplayString();
+                return playerInputActions.Player.Interact.bindings[2].ToDisplayString();
             case Binding.Gamepad_Interact_Alternate:
-                return playerInputActions.Player.InteractAlternate.bindings[1].ToDisplayString();
+                return playerInputActions.Player.InteractAlternate.bindings[2].ToDisplayString();
             case Binding.Gamepad_Pause:
                 return playerInputActions.Player.Pause.bindings[1].ToDisplayString();
         }
@@ -121,27 +141,27 @@ public class GameInput : MonoBehaviour
 
         switch(binding) {
             default:
-            case Binding.Move_Up:
+            case Binding.Move_Up_WASD:
                 inputAction = playerInputActions.Player.Move;
                 bindingIndex = 1;
                 break;
-            case Binding.Move_Down:
+            case Binding.Move_Down_WASD:
                 inputAction = playerInputActions.Player.Move;
                 bindingIndex = 2;
                 break;
-            case Binding.Move_Left:
+            case Binding.Move_Left_WASD:
                 inputAction = playerInputActions.Player.Move;
                 bindingIndex = 3;
                 break;
-            case Binding.Move_Right:
+            case Binding.Move_Right_WASD:
                 inputAction = playerInputActions.Player.Move;
                 bindingIndex = 4;
                 break;
-            case Binding.Interact:
+            case Binding.Interact_WASD:
                 inputAction = playerInputActions.Player.Interact;
                 bindingIndex = 0;
                 break;
-            case Binding.Interact_Alt:
+            case Binding.Interact_Alt_WASD:
                 inputAction = playerInputActions.Player.InteractAlternate;
                 bindingIndex = 0;
                 break;
@@ -149,13 +169,39 @@ public class GameInput : MonoBehaviour
                 inputAction = playerInputActions.Player.Pause;
                 bindingIndex = 0;
                 break;
-            case Binding.Gamepad_Interact:
+
+            case Binding.Move_Up_Arrows:
+                inputAction = playerInputActions.Player.Move;
+                bindingIndex = 6;
+                break;
+            case Binding.Move_Down_Arrows:
+                inputAction = playerInputActions.Player.Move;
+                bindingIndex = 7;
+                break;
+            case Binding.Move_Left_Arrows:
+                inputAction = playerInputActions.Player.Move;
+                bindingIndex = 8;
+                break;
+            case Binding.Move_Right_Arrows:
+                inputAction = playerInputActions.Player.Move;
+                bindingIndex = 9;
+                break;
+            case Binding.Interact_Arrows:
                 inputAction = playerInputActions.Player.Interact;
                 bindingIndex = 1;
                 break;
-            case Binding.Gamepad_Interact_Alternate:
+            case Binding.Interact_Alt_Arrows:
                 inputAction = playerInputActions.Player.InteractAlternate;
                 bindingIndex = 1;
+                break;
+
+            case Binding.Gamepad_Interact:
+                inputAction = playerInputActions.Player.Interact;
+                bindingIndex = 2;
+                break;
+            case Binding.Gamepad_Interact_Alternate:
+                inputAction = playerInputActions.Player.InteractAlternate;
+                bindingIndex = 2;
                 break;
             case Binding.Gamepad_Pause:
                 inputAction = playerInputActions.Player.Pause;
