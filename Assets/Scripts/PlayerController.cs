@@ -26,26 +26,46 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
     private Vector3 lastInteractDirection;
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
-    private GameInput gameInput; 
+    private GameInput gameInput;
+    private PlayerInputActions playerInputActions;
 
 
-/*
-    private void Awake() 
-    {
-        if(Instance != null)
+    /*
+        private void Awake() 
         {
-            Debug.LogError("There is more than one PlayerController instance");
+            if(Instance != null)
+            {
+                Debug.LogError("There is more than one PlayerController instance");
+            }
+            Instance = this;    
         }
-        Instance = this;    
-    }
-*/
+    */
 
     private void Start() 
     {
         gameInput = GameInput.Instance;
 
+        GameInput.ControlSchemes controlScheme;
+        if(GameInput.Instance.GetNumberOfPlayers() == 0 )
+        {
+            controlScheme = GameInput.ControlSchemes.Keyboard_WASD;
+            playerInputActions = gameInput.SetPlayerControlScheme(controlScheme);
+        }
+        else if(GameInput.Instance.GetNumberOfPlayers() == 1)
+        {
+            controlScheme = GameInput.ControlSchemes.Keyboard_Arrows;
+            playerInputActions = gameInput.SetPlayerControlScheme(controlScheme);
+        }
+
+        gameInput.InitializePlayerInputActions(playerInputActions);
+
         gameInput.OnInteractAction += GameInput_OnInteractAction;
         gameInput.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
+    }
+
+    private void OnDisable()
+    {
+        gameInput.DestroyPlayerInputActions(playerInputActions);
     }
 
     private void GameInput_OnInteractAction(object sender, System.EventArgs e)
@@ -80,7 +100,7 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
 
     private void HandleInteractions()
     {
-        Vector2 inputVector2Normalized = gameInput.GetMovementVectorNormalized();
+        Vector2 inputVector2Normalized = gameInput.GetMovementVectorNormalized(playerInputActions);
         Vector3 moveDirection = new Vector3(inputVector2Normalized.x, 0, inputVector2Normalized.y);
 
         if(moveDirection != Vector3.zero)
@@ -112,7 +132,7 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
 
     private void HandleMovement()
     {
-        Vector2 inputVector2Normalized = gameInput.GetMovementVectorNormalized();
+        Vector2 inputVector2Normalized = gameInput.GetMovementVectorNormalized(playerInputActions);
         Vector3 moveDirection = new Vector3(inputVector2Normalized.x, 0, inputVector2Normalized.y);
 
         float moveDistance = movementSpeed * Time.deltaTime;

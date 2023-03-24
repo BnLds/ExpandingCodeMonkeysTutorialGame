@@ -46,30 +46,59 @@ public class GameInput : MonoBehaviour
         Gamepad
     }
 
+    private int numberOfPlayers;
+
     private PlayerInputActions playerInputActions;
 
     private void Awake() 
     {
         Instance = this;
 
+        numberOfPlayers = 0;
+
         playerInputActions = new PlayerInputActions();
 
+        //LoadPlayerPrefs(playerInputActions);
+        //SubscribeToInputActions(playerInputActions);
+
+    }
+
+    public void InitializePlayerInputActions(PlayerInputActions playerInputActions)
+    {
+        numberOfPlayers++;
+
+        LoadPlayerPrefs(playerInputActions);
+        SubscribeToInputActions(playerInputActions);
+    }
+
+    private void LoadPlayerPrefs (PlayerInputActions playerInputActions)
+    {
         if(PlayerPrefs.HasKey(PLAYER_PREFS_BINDINGS))
         {
             playerInputActions.LoadBindingOverridesFromJson(PlayerPrefs.GetString(PLAYER_PREFS_BINDINGS));
         }
+    }
 
+    private void SubscribeToInputActions(PlayerInputActions playerInputActions)
+    {
         playerInputActions.Player.Enable();      
 
         playerInputActions.Player.Interact.performed += Interact_Performed;
         playerInputActions.Player.InteractAlternate.performed += InteractAlternate_Performed;
         playerInputActions.Player.Pause.performed += Pause_Performed;
+    } 
 
+    /*private void OnDestroy()
+    {
+        UnsubscribeToInputActions(playerInputActions);
+    }*/
+
+    public void DestroyPlayerInputActions(PlayerInputActions playerInputActions)
+    {
+        UnsubscribeToInputActions(playerInputActions);
     }
 
-    
-
-    private void OnDestroy()
+    private void UnsubscribeToInputActions(PlayerInputActions playerInputActions)
     {
         playerInputActions.Player.Interact.performed -= Interact_Performed;
         playerInputActions.Player.InteractAlternate.performed -= InteractAlternate_Performed;
@@ -92,7 +121,8 @@ public class GameInput : MonoBehaviour
     {
         OnInteractAction?.Invoke(this, EventArgs.Empty);
     }
-    public Vector2 GetMovementVectorNormalized()
+
+    public Vector2 GetMovementVectorNormalized(PlayerInputActions playerInputActions)
     {
         Vector2 inputVector2 = playerInputActions.Player.Move.ReadValue<Vector2>();
         inputVector2 = inputVector2.normalized;
@@ -278,8 +308,11 @@ public class GameInput : MonoBehaviour
 
                 return newPlayerInputActions;
         }
-        
-        
+    }
+
+    public int GetNumberOfPlayers()
+    {
+        return numberOfPlayers;
     }
     
 }
