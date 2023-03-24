@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IKitchenObjectParent
 {
-    public static PlayerController Instance {get; private set;}
+    //public static PlayerController Instance {get; private set;}
 
     public event EventHandler OnPickedSomething;
 
@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
 
-
+/*
     private void Awake() 
     {
         if(Instance != null)
@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
         }
         Instance = this;    
     }
+*/
 
     private void Start() 
     {

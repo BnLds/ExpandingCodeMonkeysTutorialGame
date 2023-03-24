@@ -10,7 +10,7 @@ public class SelectedCounterVis : MonoBehaviour
 
     private void Start() 
     {
-        PlayerController.Instance.OnSelectedCounterChanged += PlayerController_OnSelectedCounterChanged;
+        //PlayerController.Instance.OnSelectedCounterChanged += PlayerController_OnSelectedCounterChanged;
     }
 
     private void PlayerController_OnSelectedCounterChanged(object sender, PlayerController.OnSelectedCounterChangedEventArgs e)
