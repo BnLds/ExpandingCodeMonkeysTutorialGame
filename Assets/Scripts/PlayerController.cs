@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
     }
 
     [SerializeField] private float movementSpeed = 7f;
-    [SerializeField] private GameInput gameInput; 
     [SerializeField] private LayerMask countersLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
 
@@ -27,6 +26,8 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
     private Vector3 lastInteractDirection;
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
+    private GameInput gameInput; 
+
 
 /*
     private void Awake() 
@@ -41,6 +42,8 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
 
     private void Start() 
     {
+        gameInput = GameInput.Instance;
+
         gameInput.OnInteractAction += GameInput_OnInteractAction;
         gameInput.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
     }
@@ -204,4 +207,6 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
     {
         return kitchenObject != null;
     }
+
+
 }

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
+
 
 public class GameInput : MonoBehaviour
 {
@@ -37,6 +39,13 @@ public class GameInput : MonoBehaviour
 
     }
 
+    public enum ControlSchemes
+    {
+        Keyboard_WASD,
+        Keyboard_Arrows,
+        Gamepad
+    }
+
     private PlayerInputActions playerInputActions;
 
     private void Awake() 
@@ -55,6 +64,7 @@ public class GameInput : MonoBehaviour
         playerInputActions.Player.Interact.performed += Interact_Performed;
         playerInputActions.Player.InteractAlternate.performed += InteractAlternate_Performed;
         playerInputActions.Player.Pause.performed += Pause_Performed;
+
     }
 
     
@@ -226,4 +236,50 @@ public class GameInput : MonoBehaviour
 
     }
 
+    public PlayerInputActions SetPlayerControlScheme(ControlSchemes controlScheme)
+    {
+        PlayerInputActions newPlayerInputActions = new PlayerInputActions();
+
+        switch(controlScheme)
+        {
+            default:
+            case(ControlSchemes.Keyboard_WASD):
+
+                string WASD_SchemeName = "KeyboardWASD";
+
+                InputUser newUserWASD = InputUser.PerformPairingWithDevice(Keyboard.current);
+                InputUser.PerformPairingWithDevice(Mouse.current, newUserWASD);
+                newUserWASD.AssociateActionsWithUser(newPlayerInputActions);
+                newUserWASD.ActivateControlScheme(WASD_SchemeName);
+                newPlayerInputActions.Enable();
+
+                return newPlayerInputActions;
+
+            case(ControlSchemes.Keyboard_Arrows):
+
+                string Arrows_SchemeName = "KeyboardArrows";
+
+                InputUser newUserArrows = InputUser.PerformPairingWithDevice(Keyboard.current);
+                InputUser.PerformPairingWithDevice(Mouse.current, newUserArrows);
+                newUserArrows.AssociateActionsWithUser(newPlayerInputActions);
+                newUserArrows.ActivateControlScheme(Arrows_SchemeName);
+                newPlayerInputActions.Enable();
+
+                return newPlayerInputActions;
+            
+            case(ControlSchemes.Gamepad):
+
+                string Gamepad_SchemeName = "Gamepad";
+
+                InputUser newUserGamepad = InputUser.PerformPairingWithDevice(Gamepad.all[0]);
+                newUserGamepad.AssociateActionsWithUser(newPlayerInputActions);
+                newUserGamepad.ActivateControlScheme(Gamepad_SchemeName);
+                newPlayerInputActions.Enable();
+
+                return newPlayerInputActions;
+        }
+        
+        
+    }
+    
 }
