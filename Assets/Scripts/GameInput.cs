@@ -13,8 +13,18 @@ public class GameInput : MonoBehaviour
 
     public static GameInput Instance {get; private set;}
 
-    public event EventHandler OnInteractAction;
-    public event EventHandler OnInteractAlternateAction;
+    public event EventHandler<OnInteractActionEventArgs> OnInteractAction;
+    public class OnInteractActionEventArgs: EventArgs
+    {
+        public InputAction.CallbackContext action;
+    }
+
+    public event EventHandler<OnInteractAlternateActionEventArgs> OnInteractAlternateAction;
+    public class OnInteractAlternateActionEventArgs: EventArgs
+    {
+        public InputAction.CallbackContext action;
+    }
+
     public event EventHandler OnPauseAction;
     public event EventHandler OnBindingRebind;
 
@@ -112,14 +122,20 @@ public class GameInput : MonoBehaviour
         OnPauseAction?.Invoke(this, EventArgs.Empty);
     }
 
-    private void InteractAlternate_Performed(InputAction.CallbackContext obj)
+    private void InteractAlternate_Performed(InputAction.CallbackContext action)
     {
-        OnInteractAlternateAction?.Invoke(this, EventArgs.Empty);
+        OnInteractAlternateAction?.Invoke(this, new OnInteractAlternateActionEventArgs
+        {
+            action = action
+        });
     }
 
-    private void Interact_Performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Interact_Performed(UnityEngine.InputSystem.InputAction.CallbackContext action)
     {
-        OnInteractAction?.Invoke(this, EventArgs.Empty);
+        OnInteractAction?.Invoke(this, new OnInteractActionEventArgs
+        {
+            action = action
+        });
     }
 
     public Vector2 GetMovementVectorNormalized(PlayerInputActions playerInputActions)
@@ -313,6 +329,11 @@ public class GameInput : MonoBehaviour
     public int GetNumberOfPlayers()
     {
         return numberOfPlayers;
+    }
+
+    public bool isActionMine(InputAction.CallbackContext obj, PlayerInputActions playerInputActions)
+    {    
+        return (playerInputActions.Contains(obj.action));
     }
     
 }

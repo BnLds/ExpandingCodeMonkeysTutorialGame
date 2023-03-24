@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IKitchenObjectParent
 {
-    //public static PlayerController Instance {get; private set;}
-
     public event EventHandler OnPickedSomething;
 
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
@@ -28,18 +26,6 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
     private KitchenObject kitchenObject;
     private GameInput gameInput;
     private PlayerInputActions playerInputActions;
-
-
-    /*
-        private void Awake() 
-        {
-            if(Instance != null)
-            {
-                Debug.LogError("There is more than one PlayerController instance");
-            }
-            Instance = this;    
-        }
-    */
 
     private void Start() 
     {
@@ -68,20 +54,20 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
         gameInput.DestroyPlayerInputActions(playerInputActions);
     }
 
-    private void GameInput_OnInteractAction(object sender, System.EventArgs e)
+    private void GameInput_OnInteractAction(object sender, GameInput.OnInteractActionEventArgs e)
     {
         if(!GameManager_.Instance.IsGamePlaying()) return;
 
-        if(selectedCounter != null)
+        if(selectedCounter != null && gameInput.isActionMine(e.action, playerInputActions))
         {
             selectedCounter.Interact(this);
         }
     }
-    private void GameInput_OnInteractAlternateAction(object sender, System.EventArgs e)
+    private void GameInput_OnInteractAlternateAction(object sender, GameInput.OnInteractAlternateActionEventArgs e)
     {
         if(!GameManager_.Instance.IsGamePlaying()) return;
 
-        if(selectedCounter != null)
+        if(selectedCounter != null && gameInput.isActionMine(e.action, playerInputActions))
         {
             selectedCounter.InteractAlternate(this);
         }
