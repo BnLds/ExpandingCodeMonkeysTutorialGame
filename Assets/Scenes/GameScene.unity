@@ -1585,7 +1585,7 @@ GameObject:
   - component: {fileID: 185467468}
   - component: {fileID: 185467467}
   m_Layer: 5
-  m_Name: MoveDownButton
+  m_Name: MoveDownWASDButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2209,7 +2209,7 @@ GameObject:
   - component: {fileID: 227033803}
   - component: {fileID: 227033802}
   m_Layer: 5
-  m_Name: MoveLeftButton
+  m_Name: MoveLeftWASDButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3136,7 +3136,7 @@ GameObject:
   - component: {fileID: 280223504}
   - component: {fileID: 280223503}
   m_Layer: 5
-  m_Name: InteractAltButtonText
+  m_Name: InteractAltWASDButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5055,7 +5055,7 @@ GameObject:
   - component: {fileID: 458930170}
   - component: {fileID: 458930169}
   m_Layer: 5
-  m_Name: MoveRightButton
+  m_Name: MoveRightWASDButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7255,7 +7255,7 @@ GameObject:
   - component: {fileID: 825427672}
   - component: {fileID: 825427671}
   m_Layer: 5
-  m_Name: MoveUpButton
+  m_Name: MoveUpWASDButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9156,7 +9156,7 @@ GameObject:
   - component: {fileID: 1160114200}
   - component: {fileID: 1160114199}
   m_Layer: 5
-  m_Name: MoveDownButtonText
+  m_Name: MoveDownWASDButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9292,7 +9292,7 @@ GameObject:
   - component: {fileID: 1175843525}
   - component: {fileID: 1175843524}
   m_Layer: 5
-  m_Name: InteractButton
+  m_Name: InteractWASDButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9413,7 +9413,7 @@ GameObject:
   - component: {fileID: 1210510375}
   - component: {fileID: 1210510374}
   m_Layer: 5
-  m_Name: InteractButtonText
+  m_Name: InteractWASDButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9548,7 +9548,7 @@ GameObject:
   - component: {fileID: 1213204157}
   - component: {fileID: 1213204156}
   m_Layer: 5
-  m_Name: MoveRightButtonText
+  m_Name: MoveRightWASDButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13066,12 +13066,12 @@ MonoBehaviour:
   gamepadInteractText: {fileID: 1670069442}
   gamepadInteractAltText: {fileID: 2042128700}
   gamepadPauseText: {fileID: 169937416}
-  moveUpButton: {fileID: 825427671}
-  moveDownButton: {fileID: 185467467}
-  moveLeftButton: {fileID: 227033802}
-  moveRightButton: {fileID: 458930169}
-  interactButton: {fileID: 1175843524}
-  interactAltButton: {fileID: 1976881576}
+  moveUpWASDButton: {fileID: 825427671}
+  moveDownWASDButton: {fileID: 185467467}
+  moveLeftWASDButton: {fileID: 227033802}
+  moveRightWASDButton: {fileID: 458930169}
+  interactWASDButton: {fileID: 1175843524}
+  interactAltWASDButton: {fileID: 1976881576}
   pauseButton: {fileID: 1970240090}
   moveUpArrowsButton: {fileID: 1240654713}
   moveDownArrowsButton: {fileID: 1846870153}
@@ -13959,7 +13959,7 @@ GameObject:
   - component: {fileID: 1692548983}
   - component: {fileID: 1692548982}
   m_Layer: 5
-  m_Name: MoveLeftButtonText
+  m_Name: MoveLeftWASDButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16577,7 +16577,7 @@ GameObject:
   - component: {fileID: 1970240091}
   - component: {fileID: 1970240090}
   m_Layer: 5
-  m_Name: PauseButton
+  m_Name: PauseWASDButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16699,7 +16699,7 @@ GameObject:
   - component: {fileID: 1976881577}
   - component: {fileID: 1976881576}
   m_Layer: 5
-  m_Name: InteractAltButton
+  m_Name: InteractAltWASDButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17103,7 +17103,7 @@ GameObject:
   - component: {fileID: 2007583959}
   - component: {fileID: 2007583958}
   m_Layer: 5
-  m_Name: PauseButtonText
+  m_Name: PauseWASDButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18232,7 +18232,7 @@ GameObject:
   - component: {fileID: 2128774598}
   - component: {fileID: 2128774597}
   m_Layer: 5
-  m_Name: MoveUpButtonText
+  m_Name: MoveUpWASDButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

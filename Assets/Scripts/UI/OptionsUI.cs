@@ -33,12 +33,12 @@ public class OptionsUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gamepadInteractAltText;
     [SerializeField] private TextMeshProUGUI gamepadPauseText;
 
-    [SerializeField] private Button moveUpButton;
-    [SerializeField] private Button moveDownButton;
-    [SerializeField] private Button moveLeftButton;
-    [SerializeField] private Button moveRightButton;
-    [SerializeField] private Button interactButton;
-    [SerializeField] private Button interactAltButton;
+    [SerializeField] private Button moveUpWASDButton;
+    [SerializeField] private Button moveDownWASDButton;
+    [SerializeField] private Button moveLeftWASDButton;
+    [SerializeField] private Button moveRightWASDButton;
+    [SerializeField] private Button interactWASDButton;
+    [SerializeField] private Button interactAltWASDButton;
     [SerializeField] private Button pauseButton;
     [SerializeField] private Button moveUpArrowsButton;
     [SerializeField] private Button moveDownArrowsButton;
@@ -82,12 +82,12 @@ public class OptionsUI : MonoBehaviour
             onCloseButtonAction();
         });
 
-        moveUpButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Up_WASD);});
-        moveDownButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Down_WASD);});
-        moveLeftButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Left_WASD);});
-        moveRightButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Right_WASD);});
-        interactButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact_WASD);});
-        interactAltButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact_Alt_WASD);});
+        moveUpWASDButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Up_WASD);});
+        moveDownWASDButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Down_WASD);});
+        moveLeftWASDButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Left_WASD);});
+        moveRightWASDButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Right_WASD);});
+        interactWASDButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact_WASD);});
+        interactAltWASDButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact_Alt_WASD);});
         pauseButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Pause);});
 
         moveUpArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Up_Arrows);});
