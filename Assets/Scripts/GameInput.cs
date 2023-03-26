@@ -57,6 +57,20 @@ public class GameInput : MonoBehaviour
     }
 
     private int numberOfPlayers;
+    public struct controlSchemesAllocation
+    {
+        public int playerID;
+        public PlayerInputActions playerInputActions;
+
+        public controlSchemesAllocation(int playerID, PlayerInputActions playerInputActions)
+        {
+            this.playerID = playerID;
+            this.playerInputActions = playerInputActions;
+        }
+    }
+
+    private static controlSchemesAllocation[] controlSchemesAllocationArray;
+    private int numberOfPlayersMax = 3;
 
     private PlayerInputActions playerInputActions;
 
@@ -65,6 +79,8 @@ public class GameInput : MonoBehaviour
         Instance = this;
 
         numberOfPlayers = 0;
+
+        controlSchemesAllocationArray = new controlSchemesAllocation[numberOfPlayersMax];
 
         playerInputActions = new PlayerInputActions();
 
@@ -76,6 +92,8 @@ public class GameInput : MonoBehaviour
     public void InitializePlayerInputActions(PlayerInputActions playerInputActions)
     {
         numberOfPlayers++;
+
+        controlSchemesAllocationArray[numberOfPlayers - 1] = new controlSchemesAllocation(numberOfPlayers, playerInputActions);
 
         LoadPlayerPrefs(playerInputActions);
         SubscribeToInputActions(playerInputActions);
@@ -339,6 +357,6 @@ public class GameInput : MonoBehaviour
 
     private void ReloadPlayerInputActions()
     {
-        
+
     }
 }
