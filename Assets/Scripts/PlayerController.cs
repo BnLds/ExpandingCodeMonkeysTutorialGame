@@ -24,41 +24,26 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
     private Vector3 lastInteractDirection;
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
-    private GameInput gameInput;
     private PlayerInputActions playerInputActions;
 
     private void Start() 
     {
-        gameInput = GameInput.Instance;
+        playerInputActions = GameInput.Instance.SetPlayerControlScheme();
 
-        GameInput.ControlSchemes controlScheme;
-        if(GameInput.Instance.GetNumberOfPlayers() == 0 )
-        {
-            controlScheme = GameInput.ControlSchemes.Keyboard_WASD;
-            playerInputActions = gameInput.SetPlayerControlScheme(controlScheme);
-        }
-        else if(GameInput.Instance.GetNumberOfPlayers() == 1)
-        {
-            controlScheme = GameInput.ControlSchemes.Keyboard_Arrows;
-            playerInputActions = gameInput.SetPlayerControlScheme(controlScheme);
-        }
-
-        gameInput.InitializePlayerInputActions(playerInputActions);
-
-        gameInput.OnInteractAction += GameInput_OnInteractAction;
-        gameInput.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
+        GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
+        GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
     }
 
     private void OnDisable()
     {
-        gameInput.DestroyPlayerInputActions(playerInputActions);
+        GameInput.Instance.DestroyPlayerInputActions(playerInputActions);
     }
 
     private void GameInput_OnInteractAction(object sender, GameInput.OnInteractActionEventArgs e)
     {
         if(!GameManager_.Instance.IsGamePlaying()) return;
 
-        if(selectedCounter != null && gameInput.isActionMine(e.action, playerInputActions))
+        if(selectedCounter != null && GameInput.Instance.isActionMine(e.action, playerInputActions))
         {
             selectedCounter.Interact(this);
         }
@@ -67,7 +52,7 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
     {
         if(!GameManager_.Instance.IsGamePlaying()) return;
 
-        if(selectedCounter != null && gameInput.isActionMine(e.action, playerInputActions))
+        if(selectedCounter != null && GameInput.Instance.isActionMine(e.action, playerInputActions))
         {
             selectedCounter.InteractAlternate(this);
         }
@@ -86,7 +71,7 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
 
     private void HandleInteractions()
     {
-        Vector2 inputVector2Normalized = gameInput.GetMovementVectorNormalized(playerInputActions);
+        Vector2 inputVector2Normalized = GameInput.Instance.GetMovementVectorNormalized(playerInputActions);
         Vector3 moveDirection = new Vector3(inputVector2Normalized.x, 0, inputVector2Normalized.y);
 
         if(moveDirection != Vector3.zero)
@@ -118,7 +103,7 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
 
     private void HandleMovement()
     {
-        Vector2 inputVector2Normalized = gameInput.GetMovementVectorNormalized(playerInputActions);
+        Vector2 inputVector2Normalized = GameInput.Instance.GetMovementVectorNormalized(playerInputActions);
         Vector3 moveDirection = new Vector3(inputVector2Normalized.x, 0, inputVector2Normalized.y);
 
         float moveDistance = movementSpeed * Time.deltaTime;

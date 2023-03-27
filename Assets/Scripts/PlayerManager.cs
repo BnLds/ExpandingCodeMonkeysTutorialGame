@@ -1,36 +1,34 @@
-
 using UnityEngine;
+using UnityEngine.UI;
+using System;
 
 public class PlayerManager : MonoBehaviour
 {
+    public static PlayerManager Instance { get; private set; }
+
     [SerializeField] private Transform playerPrefab;
+    [SerializeField] private Button addNewPlayerButton;
+    [SerializeField] private AddNewPlayerScreenUI addNewPlayerScreenUI;
 
-    private float spawnTimerPlayer2 = 7f;
+    public event EventHandler OnAddNewPlayer;
 
-    private bool canSpawnPlayer2 = true;
+    private void Awake()
+    {
+        Instance = this;
+
+        addNewPlayerButton.onClick.AddListener(() => OnAddNewPlayer?.Invoke(this, EventArgs.Empty));
+    }
 
     private void Start()
     {
-        GameObject newPlayer = Instantiate(playerPrefab.gameObject, Vector3.zero, Quaternion.identity);
+        addNewPlayerScreenUI.OnControlOptionSelection += AddNewPlayerScreenUI_OnControlOptionSelection;
+
     }
 
-
-    private void Update()
+    private void AddNewPlayerScreenUI_OnControlOptionSelection(object sender, AddNewPlayerScreenUI.EventArgsOnControlOptionSelection e)
     {
-        spawnTimerPlayer2 -= Time.deltaTime;
-
-        if(spawnTimerPlayer2 <= 0f && canSpawnPlayer2)
-        {
-            canSpawnPlayer2 = !canSpawnPlayer2;
-            Debug.Log("Attempting to spawn player 2...");
-
-            GameObject newPlayer = Instantiate(playerPrefab.gameObject, Vector3.zero, Quaternion.identity);
-
-            Debug.Log("Player 2 spawned ");
-        }
-
+        GameInput.Instance.SetNextPlayerControlScheme(e.controlSchemeSelected);
+        Instantiate(playerPrefab.gameObject, Vector3.zero, Quaternion.identity);
     }
-
-
 
 }

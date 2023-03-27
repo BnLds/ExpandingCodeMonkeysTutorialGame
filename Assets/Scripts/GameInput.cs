@@ -4,12 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Users;
+using System.Linq;
 
 
 public class GameInput : MonoBehaviour
 {
 
     private const string PLAYER_PREFS_BINDINGS = "InputBindings";
+    private const string KEYBOARD_WASD_SCHEME = "Keyboard_WASD";
+    private const string KEYBOARD_ARROWS_SCHEME = "Keyboard_Arrows";
+    private const string GAMEPAD_SCHEME = "Gamepad";
+
 
     public static GameInput Instance {get; private set;}
 
@@ -56,7 +61,6 @@ public class GameInput : MonoBehaviour
         Gamepad
     }
 
-    private int numberOfPlayers;
     public struct controlSchemesAllocation
     {
         public int playerID;
@@ -69,18 +73,21 @@ public class GameInput : MonoBehaviour
         }
     }
 
+    private List<string> availableControlSchemes;
+    private int numberOfPlayers;
     private static controlSchemesAllocation[] controlSchemesAllocationArray;
     private int numberOfPlayersMax = 3;
-
     private PlayerInputActions defaultPlayerInputActions;
+    private string nextPlayerControlScheme;
 
     private void Awake() 
     {
         Instance = this;
 
         numberOfPlayers = 0;
-
         controlSchemesAllocationArray = new controlSchemesAllocation[numberOfPlayersMax];
+
+        availableControlSchemes = new List<string>() {KEYBOARD_WASD_SCHEME, KEYBOARD_ARROWS_SCHEME, GAMEPAD_SCHEME};
 
         defaultPlayerInputActions = new PlayerInputActions();
 
@@ -90,7 +97,7 @@ public class GameInput : MonoBehaviour
         }
     }
 
-    public void InitializePlayerInputActions(PlayerInputActions playerInputActions)
+    private void InitializePlayerInputActions(PlayerInputActions playerInputActions)
     {
         numberOfPlayers++;
 
@@ -308,14 +315,21 @@ public class GameInput : MonoBehaviour
         }
     }
 
-    public PlayerInputActions SetPlayerControlScheme(ControlSchemes controlScheme)
+    public PlayerInputActions SetPlayerControlScheme()
     {
+        availableControlSchemes.Remove(nextPlayerControlScheme);
+
         PlayerInputActions newPlayerInputActions = new PlayerInputActions();
 
-        switch(controlScheme)
+        switch(nextPlayerControlScheme)
         {
             default:
-            case(ControlSchemes.Keyboard_WASD):
+                Debug.LogError("Unable to return PlayerInputActions for control scheme: "+ nextPlayerControlScheme);
+
+                InitializePlayerInputActions(newPlayerInputActions);
+                return newPlayerInputActions;
+
+            case(KEYBOARD_WASD_SCHEME):
 
                 string WASD_SchemeName = "KeyboardWASD";
 
@@ -325,9 +339,11 @@ public class GameInput : MonoBehaviour
                 newUserWASD.ActivateControlScheme(WASD_SchemeName);
                 newPlayerInputActions.Enable();
 
+                InitializePlayerInputActions(newPlayerInputActions);
+                Debug.Log("returned PlayerInputActions for " + KEYBOARD_WASD_SCHEME);
                 return newPlayerInputActions;
 
-            case(ControlSchemes.Keyboard_Arrows):
+            case(KEYBOARD_ARROWS_SCHEME):
 
                 string Arrows_SchemeName = "KeyboardArrows";
 
@@ -337,9 +353,11 @@ public class GameInput : MonoBehaviour
                 newUserArrows.ActivateControlScheme(Arrows_SchemeName);
                 newPlayerInputActions.Enable();
 
+                InitializePlayerInputActions(newPlayerInputActions);
+
                 return newPlayerInputActions;
             
-            case(ControlSchemes.Gamepad):
+            case(GAMEPAD_SCHEME):
 
                 string Gamepad_SchemeName = "Gamepad";
 
@@ -347,6 +365,8 @@ public class GameInput : MonoBehaviour
                 newUserGamepad.AssociateActionsWithUser(newPlayerInputActions);
                 newUserGamepad.ActivateControlScheme(Gamepad_SchemeName);
                 newPlayerInputActions.Enable();
+
+                InitializePlayerInputActions(newPlayerInputActions);
 
                 return newPlayerInputActions;
         }
@@ -366,4 +386,15 @@ public class GameInput : MonoBehaviour
     {
         return defaultPlayerInputActions;
     }
+
+    public List<string> GetAvailableControlSchemes()
+    {
+        return availableControlSchemes;
+    }
+
+    public void SetNextPlayerControlScheme(string controlScheme)
+    {
+        nextPlayerControlScheme = controlScheme;
+    }
+
 }
