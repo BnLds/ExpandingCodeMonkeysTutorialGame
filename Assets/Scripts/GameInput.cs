@@ -72,7 +72,7 @@ public class GameInput : MonoBehaviour
     private static controlSchemesAllocation[] controlSchemesAllocationArray;
     private int numberOfPlayersMax = 3;
 
-    private PlayerInputActions playerInputActions;
+    private PlayerInputActions defaultPlayerInputActions;
 
     private void Awake() 
     {
@@ -82,19 +82,20 @@ public class GameInput : MonoBehaviour
 
         controlSchemesAllocationArray = new controlSchemesAllocation[numberOfPlayersMax];
 
-        playerInputActions = new PlayerInputActions();
+        defaultPlayerInputActions = new PlayerInputActions();
 
-        //LoadPlayerPrefs(playerInputActions);
-        //SubscribeToInputActions(playerInputActions);
-
+        if(PlayerPrefs.HasKey(PLAYER_PREFS_BINDINGS))
+        {
+            defaultPlayerInputActions.LoadBindingOverridesFromJson(PlayerPrefs.GetString(PLAYER_PREFS_BINDINGS));
+        }
     }
 
     public void InitializePlayerInputActions(PlayerInputActions playerInputActions)
     {
         numberOfPlayers++;
 
-        controlSchemesAllocationArray[numberOfPlayers - 1] = new controlSchemesAllocation(numberOfPlayers, playerInputActions);
-
+        controlSchemesAllocationArray[numberOfPlayers-1] = new controlSchemesAllocation(numberOfPlayers, playerInputActions);
+        
         LoadPlayerPrefs(playerInputActions);
         SubscribeToInputActions(playerInputActions);
     }
@@ -115,11 +116,6 @@ public class GameInput : MonoBehaviour
         playerInputActions.Player.InteractAlternate.performed += InteractAlternate_Performed;
         playerInputActions.Player.Pause.performed += Pause_Performed;
     } 
-
-    /*private void OnDestroy()
-    {
-        UnsubscribeToInputActions(playerInputActions);
-    }*/
 
     public void DestroyPlayerInputActions(PlayerInputActions playerInputActions)
     {
@@ -170,134 +166,146 @@ public class GameInput : MonoBehaviour
         {
             default:
             case Binding.Interact_WASD:
-                return (playerInputActions.Player.Interact.bindings[0].ToDisplayString());
+                return (defaultPlayerInputActions.Player.Interact.bindings[0].ToDisplayString());
             case Binding.Interact_Alt_WASD:
-                return (playerInputActions.Player.InteractAlternate.bindings[0].ToDisplayString());
+                return (defaultPlayerInputActions.Player.InteractAlternate.bindings[0].ToDisplayString());
             case Binding.Pause:
-                return (playerInputActions.Player.Pause.bindings[0].ToDisplayString());
+                return (defaultPlayerInputActions.Player.Pause.bindings[0].ToDisplayString());
             case Binding.Move_Up_WASD:
-                return (playerInputActions.Player.Move.bindings[1].ToDisplayString());
+                return (defaultPlayerInputActions.Player.Move.bindings[1].ToDisplayString());
             case Binding.Move_Down_WASD:
-                return (playerInputActions.Player.Move.bindings[2].ToDisplayString());
+                return (defaultPlayerInputActions.Player.Move.bindings[2].ToDisplayString());
             case Binding.Move_Left_WASD:
-                return (playerInputActions.Player.Move.bindings[3].ToDisplayString());
+                return (defaultPlayerInputActions.Player.Move.bindings[3].ToDisplayString());
             case Binding.Move_Right_WASD:
-                return (playerInputActions.Player.Move.bindings[4].ToDisplayString());
+                return (defaultPlayerInputActions.Player.Move.bindings[4].ToDisplayString());
 
             case Binding.Interact_Arrows:
-                return (playerInputActions.Player.Interact.bindings[1].ToDisplayString());
+                return (defaultPlayerInputActions.Player.Interact.bindings[1].ToDisplayString());
             case Binding.Interact_Alt_Arrows:
-                return (playerInputActions.Player.InteractAlternate.bindings[1].ToDisplayString());
+                return (defaultPlayerInputActions.Player.InteractAlternate.bindings[1].ToDisplayString());
             case Binding.Move_Up_Arrows:
-                return (playerInputActions.Player.Move.bindings[6].ToDisplayString());
+                return (defaultPlayerInputActions.Player.Move.bindings[6].ToDisplayString());
             case Binding.Move_Down_Arrows:
-                return playerInputActions.Player.Move.bindings[7].ToDisplayString();
+                return defaultPlayerInputActions.Player.Move.bindings[7].ToDisplayString();
             case Binding.Move_Left_Arrows:
-                return playerInputActions.Player.Move.bindings[8].ToDisplayString();
+                return defaultPlayerInputActions.Player.Move.bindings[8].ToDisplayString();
             case Binding.Move_Right_Arrows:
-                return playerInputActions.Player.Move.bindings[9].ToDisplayString();
+                return defaultPlayerInputActions.Player.Move.bindings[9].ToDisplayString();
 
             case Binding.Gamepad_Interact:
-                return playerInputActions.Player.Interact.bindings[2].ToDisplayString();
+                return defaultPlayerInputActions.Player.Interact.bindings[2].ToDisplayString();
             case Binding.Gamepad_Interact_Alternate:
-                return playerInputActions.Player.InteractAlternate.bindings[2].ToDisplayString();
+                return defaultPlayerInputActions.Player.InteractAlternate.bindings[2].ToDisplayString();
             case Binding.Gamepad_Pause:
-                return playerInputActions.Player.Pause.bindings[1].ToDisplayString();
+                return defaultPlayerInputActions.Player.Pause.bindings[1].ToDisplayString();
         }
     }
 
     public void RebindBinding(Binding binding, Action onActionRebound)
     {
-        playerInputActions.Player.Disable();
+        defaultPlayerInputActions.Player.Disable();
 
         InputAction inputAction;
         int bindingIndex;
-
-        switch(binding) {
+        switch (binding)
+        {
             default:
             case Binding.Move_Up_WASD:
-                inputAction = playerInputActions.Player.Move;
+                inputAction = defaultPlayerInputActions.Player.Move;
                 bindingIndex = 1;
                 break;
             case Binding.Move_Down_WASD:
-                inputAction = playerInputActions.Player.Move;
+                inputAction = defaultPlayerInputActions.Player.Move;
                 bindingIndex = 2;
                 break;
             case Binding.Move_Left_WASD:
-                inputAction = playerInputActions.Player.Move;
+                inputAction = defaultPlayerInputActions.Player.Move;
                 bindingIndex = 3;
                 break;
             case Binding.Move_Right_WASD:
-                inputAction = playerInputActions.Player.Move;
+                inputAction = defaultPlayerInputActions.Player.Move;
                 bindingIndex = 4;
                 break;
             case Binding.Interact_WASD:
-                inputAction = playerInputActions.Player.Interact;
+                inputAction = defaultPlayerInputActions.Player.Interact;
                 bindingIndex = 0;
                 break;
             case Binding.Interact_Alt_WASD:
-                inputAction = playerInputActions.Player.InteractAlternate;
+                inputAction = defaultPlayerInputActions.Player.InteractAlternate;
                 bindingIndex = 0;
                 break;
             case Binding.Pause:
-                inputAction = playerInputActions.Player.Pause;
+                inputAction = defaultPlayerInputActions.Player.Pause;
                 bindingIndex = 0;
                 break;
-
             case Binding.Move_Up_Arrows:
-                inputAction = playerInputActions.Player.Move;
+                inputAction = defaultPlayerInputActions.Player.Move;
                 bindingIndex = 6;
                 break;
             case Binding.Move_Down_Arrows:
-                inputAction = playerInputActions.Player.Move;
+                inputAction = defaultPlayerInputActions.Player.Move;
                 bindingIndex = 7;
                 break;
             case Binding.Move_Left_Arrows:
-                inputAction = playerInputActions.Player.Move;
+                inputAction = defaultPlayerInputActions.Player.Move;
                 bindingIndex = 8;
                 break;
             case Binding.Move_Right_Arrows:
-                inputAction = playerInputActions.Player.Move;
+                inputAction = defaultPlayerInputActions.Player.Move;
                 bindingIndex = 9;
                 break;
             case Binding.Interact_Arrows:
-                inputAction = playerInputActions.Player.Interact;
+                inputAction = defaultPlayerInputActions.Player.Interact;
                 bindingIndex = 1;
                 break;
             case Binding.Interact_Alt_Arrows:
-                inputAction = playerInputActions.Player.InteractAlternate;
+                inputAction = defaultPlayerInputActions.Player.InteractAlternate;
                 bindingIndex = 1;
                 break;
-
             case Binding.Gamepad_Interact:
-                inputAction = playerInputActions.Player.Interact;
+                inputAction = defaultPlayerInputActions.Player.Interact;
                 bindingIndex = 2;
                 break;
             case Binding.Gamepad_Interact_Alternate:
-                inputAction = playerInputActions.Player.InteractAlternate;
+                inputAction = defaultPlayerInputActions.Player.InteractAlternate;
                 bindingIndex = 2;
                 break;
             case Binding.Gamepad_Pause:
-                inputAction = playerInputActions.Player.Pause;
+                inputAction = defaultPlayerInputActions.Player.Pause;
                 bindingIndex = 1;
                 break;
         }
-
         inputAction.PerformInteractiveRebinding(bindingIndex)
-            .OnComplete( callback => 
+            .OnComplete(callback =>
             {
                 callback.Dispose();
-                playerInputActions.Player.Enable();
-                onActionRebound();    
+                defaultPlayerInputActions.Player.Enable();
 
-                
-                PlayerPrefs.SetString(PLAYER_PREFS_BINDINGS, playerInputActions.SaveBindingOverridesAsJson());
+                onActionRebound();
+
+                PlayerPrefs.SetString(PLAYER_PREFS_BINDINGS, defaultPlayerInputActions.SaveBindingOverridesAsJson());
                 PlayerPrefs.Save();
 
-                OnBindingRebind?.Invoke(this, EventArgs.Empty);
-            }) 
-            .Start();
+                ReloadBindingsOnRebind();
 
+                OnBindingRebind?.Invoke(this, EventArgs.Empty);
+                
+            })
+            .Start();
+    }
+        
+    private void ReloadBindingsOnRebind()
+    {
+        LoadPlayerPrefs(defaultPlayerInputActions);
+
+        foreach (controlSchemesAllocation allocation in controlSchemesAllocationArray)
+        {
+            if (allocation.playerInputActions != null)
+            {
+                LoadPlayerPrefs(allocation.playerInputActions);
+            }
+        }
     }
 
     public PlayerInputActions SetPlayerControlScheme(ControlSchemes controlScheme)
@@ -353,10 +361,9 @@ public class GameInput : MonoBehaviour
     {    
         return (playerInputActions.Contains(obj.action));
     }
-    
-
-    private void ReloadPlayerInputActions()
+ 
+    public PlayerInputActions GetDefaultPlayerInputActions()
     {
-
+        return defaultPlayerInputActions;
     }
 }
