@@ -68,11 +68,13 @@ public class GameInput : MonoBehaviour
     {
         public int playerID;
         public PlayerInputActions playerInputActions;
+        //public InputDevice inputDevice;
 
-        public controlSchemesAllocation(int playerID, PlayerInputActions playerInputActions)
+        public controlSchemesAllocation(int playerID, PlayerInputActions playerInputActions/*, InputDevice inputDevice*/)
         {
             this.playerID = playerID;
             this.playerInputActions = playerInputActions;
+            //this.inputDevice = inputDevice;
         }
     }
 
@@ -106,22 +108,25 @@ public class GameInput : MonoBehaviour
         }
     }
 
-    private void UpdateConnectedDevices()
+    private void Start()
     {
-        foreach(InputDevice connectedDevice in InputSystem.devices.ToList())
-        {
-            if(!connectedDevices.Contains(connectedDevice))
-            {
-                connectedDevices.Add(connectedDevice);
-            }
-        }
+        InputSystem.onDeviceChange += InputSystem_OnDeviceChange;
 
-        foreach(InputDevice formerConnectedDevices in connectedDevices)
+    }
+
+    private void InputSystem_OnDeviceChange(InputDevice device, InputDeviceChange change)
+    {
+        switch (change)
         {
-            if(!InputSystem.devices.ToList().Contains(formerConnectedDevices))
-            {
-                connectedDevices.Remove(formerConnectedDevices);
-            }
+            case InputDeviceChange.Added:
+                Debug.Log("Device added: " + device);
+                break;
+            case InputDeviceChange.Removed:
+                Debug.Log("Device removed: " + device);
+                break;
+            case InputDeviceChange.ConfigurationChanged:
+                Debug.Log("Device configuration changed: " + device);
+                break;
         }
     }
 
@@ -220,7 +225,7 @@ public class GameInput : MonoBehaviour
                 newPlayerInputActions.Enable();
 
                 InitializePlayerInputActions(newPlayerInputActions);
-                Debug.Log("returned PlayerInputActions for " + KEYBOARD_WASD_SCHEME);
+
                 return newPlayerInputActions;
 
             case(KEYBOARD_ARROWS_SCHEME):
@@ -292,15 +297,10 @@ public class GameInput : MonoBehaviour
                 availableControlSchemesWithConnectedDevices.Add(GAMEPAD_SCHEME);
             }
         }
-        foreach(var element in availableControlSchemesWithConnectedDevices)
-        {
-            Debug.Log(element);
-        }
     }
 
     public List<string> GetAvailableControlSchemesWithConnectedDevices()
     {
-        UpdateConnectedDevices();
         UpdateAvailableControlSchemesWithConnectedDevices();
         return availableControlSchemesWithConnectedDevices;
     }
@@ -308,7 +308,6 @@ public class GameInput : MonoBehaviour
     public List<string> GetSupportedDevicesNotConnected()
     {
         List<string> supportedDevicesNotConnected = supportedDevices;
-        UpdateConnectedDevices();
         foreach(InputDevice device in connectedDevices)
         {
             if(supportedDevicesNotConnected.Contains(device.name))

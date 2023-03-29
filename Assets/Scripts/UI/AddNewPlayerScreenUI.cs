@@ -7,11 +7,10 @@ using TMPro;
 
 public class AddNewPlayerScreenUI : MonoBehaviour
 {
-
     public static AddNewPlayerScreenUI Instance { get; private set; }
 
     [SerializeField] private Transform container;
-    [SerializeField] private Transform buttonHolderTemplate;
+    [SerializeField] private Transform buttonTemplate;
     [SerializeField] private Button resumeButton;
     [SerializeField] private TextMeshProUGUI connectControlText;
 
@@ -56,20 +55,14 @@ public class AddNewPlayerScreenUI : MonoBehaviour
 
             for (int i = 0; i < numberOfNewButtonsToInstantiate; i++)
             {
-                Instantiate(buttonHolderTemplate, container);
-            }
-            
-            string[] availableControlSchemesArray = new string[numberOfControlSchemesAvailable];
-            for(int i = 0; i < availableControlSchemesArray.Length; i++)
-            {
-                availableControlSchemesArray[i] = availableControlSchemes[i];
-            }
+                Instantiate(buttonTemplate, container);
+            }         
 
-            int availableControlSchemesArrayIndex = availableControlSchemesArray.Length-1;
+            int availableControlSchemesIndex = numberOfControlSchemesAvailable-1;
             foreach(Transform child in container)
             {
-                child.GetComponent<ControlOptionSingleButtonUI>().SetControlOptionText(availableControlSchemesArray[availableControlSchemesArrayIndex]);
-                availableControlSchemesArrayIndex--;
+                child.GetComponent<ControlOptionSingleButtonUI>().SetControlOptionText(availableControlSchemes[availableControlSchemesIndex]);
+                availableControlSchemesIndex--;
             }
 
             AddListenerToNewButtons();
@@ -83,7 +76,7 @@ public class AddNewPlayerScreenUI : MonoBehaviour
             {
                 connectControlText.gameObject.SetActive(true);
                 string deviceName = GameInput.Instance.GetSupportedDevicesNotConnected()[0];
-                connectControlText.text = "Connect a "+ deviceName + "to enable "+ deviceName +" controls.";
+                connectControlText.text = "Connect a "+ deviceName + " to enable "+ deviceName +" controls.";
 
             }
             else
@@ -97,8 +90,6 @@ public class AddNewPlayerScreenUI : MonoBehaviour
                 connectControlText.text = "Connect a "+ deviceNames + " to enable "+ deviceNames +" controls."; 
             }
         }
-
-        
         yield return null;
     }
 
@@ -106,7 +97,7 @@ public class AddNewPlayerScreenUI : MonoBehaviour
     {
         foreach(Transform child in container)
         {
-            child.GetComponent<ControlOptionSingleButtonUI>().GetButtonTemplate().GetComponent<Button>().onClick.AddListener(() => SelectControlOption(child.GetComponent<ControlOptionSingleButtonUI>().GetControlOption()));
+            child.GetComponent<Button>().onClick.AddListener(() => SelectControlOption(child.GetComponent<ControlOptionSingleButtonUI>().GetControlOption()));
         }   
     }
 
@@ -114,7 +105,7 @@ public class AddNewPlayerScreenUI : MonoBehaviour
     {
         foreach(Transform child in container)
         {
-            child.GetComponent<ControlOptionSingleButtonUI>().GetButtonTemplate().GetComponent<Button>().onClick.RemoveAllListeners();
+            child.GetComponent<Button>().onClick.RemoveAllListeners();
         }  
     }
 
@@ -123,7 +114,7 @@ public class AddNewPlayerScreenUI : MonoBehaviour
         RemoveListenerToButtons();
         foreach(Transform child in container)
         {
-            if(child == buttonHolderTemplate)
+            if(child == buttonTemplate)
             {
                 continue;
             }
