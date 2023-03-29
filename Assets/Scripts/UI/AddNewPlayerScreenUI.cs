@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
 
 public class AddNewPlayerScreenUI : MonoBehaviour
 {
@@ -43,11 +44,13 @@ public class AddNewPlayerScreenUI : MonoBehaviour
         // wait 1 frame for completion of Destroy method in DeleteButtons()
         yield return new WaitForEndOfFrame();
 
-        bool isControlSchemeAvailable = GameInput.Instance.GetAvailableControlSchemes() != null;
+        List<string> availableControlSchemes = GameInput.Instance.GetAvailableControlSchemesWithConnectedDevices();
+
+        bool isControlSchemeAvailable = availableControlSchemes.Count != 0;
 
         if (isControlSchemeAvailable)
         {
-            int numberOfControlSchemesAvailable = GameInput.Instance.GetAvailableControlSchemes().Count;
+            int numberOfControlSchemesAvailable = availableControlSchemes.Count;
             int numberOfNewButtonsToInstantiate = numberOfControlSchemesAvailable - 1;
 
             for (int i = 0; i < numberOfNewButtonsToInstantiate; i++)
@@ -58,7 +61,7 @@ public class AddNewPlayerScreenUI : MonoBehaviour
             string[] availableControlSchemesArray = new string[numberOfControlSchemesAvailable];
             for(int i = 0; i < availableControlSchemesArray.Length; i++)
             {
-                availableControlSchemesArray[i] = GameInput.Instance.GetAvailableControlSchemes()[i];
+                availableControlSchemesArray[i] = availableControlSchemes[i];
             }
 
             int availableControlSchemesArrayIndex = availableControlSchemesArray.Length-1;
@@ -83,8 +86,17 @@ public class AddNewPlayerScreenUI : MonoBehaviour
         }   
     }
 
+    private void RemoveListenerToButtons()
+    {
+        foreach(Transform child in container)
+        {
+            child.GetComponent<ControlOptionSingleButtonUI>().GetButtonTemplate().GetComponent<Button>().onClick.RemoveAllListeners();
+        }  
+    }
+
     private void DeleteButtons()
     {
+        RemoveListenerToButtons();
         foreach(Transform child in container)
         {
             if(child == buttonHolderTemplate)

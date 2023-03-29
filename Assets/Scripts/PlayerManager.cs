@@ -14,7 +14,7 @@ public class PlayerManager : MonoBehaviour
     {
         Instance = this;
 
-        addNewPlayerButton.onClick.AddListener(() => AddNewPlayerScreenUI.Instance.ShowAndUpdateVisual());
+        addNewPlayerButton.onClick.AddListener(AddNewPlayerScreenUI.Instance.ShowAndUpdateVisual);
     }
 
     private void Start()

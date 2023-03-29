@@ -14,6 +14,9 @@ public class GameInput : MonoBehaviour
     private const string KEYBOARD_WASD_SCHEME = "Keyboard_WASD";
     private const string KEYBOARD_ARROWS_SCHEME = "Keyboard_Arrows";
     private const string GAMEPAD_SCHEME = "Gamepad";
+    private const string KEYBOARD_NAME = "Keyboard";
+    private const string GAMEPAD_NAME = "Gamepad";
+
 
 
     public static GameInput Instance {get; private set;}
@@ -74,6 +77,9 @@ public class GameInput : MonoBehaviour
     }
 
     private List<string> availableControlSchemes;
+    private List<InputDevice> connectedDevices;
+    private List<string> availableControlSchemesWithConnectedDevices;
+
     private int numberOfPlayers;
     private static controlSchemesAllocation[] controlSchemesAllocationArray;
     private int numberOfPlayersMax = 3;
@@ -86,7 +92,8 @@ public class GameInput : MonoBehaviour
 
         numberOfPlayers = 0;
         controlSchemesAllocationArray = new controlSchemesAllocation[numberOfPlayersMax];
-
+        
+        connectedDevices = InputSystem.devices.ToList();
         availableControlSchemes = new List<string>() {KEYBOARD_WASD_SCHEME, KEYBOARD_ARROWS_SCHEME, GAMEPAD_SCHEME};
 
         defaultPlayerInputActions = new PlayerInputActions();
@@ -94,6 +101,25 @@ public class GameInput : MonoBehaviour
         if(PlayerPrefs.HasKey(PLAYER_PREFS_BINDINGS))
         {
             defaultPlayerInputActions.LoadBindingOverridesFromJson(PlayerPrefs.GetString(PLAYER_PREFS_BINDINGS));
+        }
+    }
+
+    private void UpdateConnectedDevices()
+    {
+        foreach(InputDevice connectedDevice in InputSystem.devices.ToList())
+        {
+            if(!connectedDevices.Contains(connectedDevice))
+            {
+                connectedDevices.Add(connectedDevice);
+            }
+        }
+
+        foreach(InputDevice formerConnectedDevices in connectedDevices)
+        {
+            if(!InputSystem.devices.ToList().Contains(formerConnectedDevices))
+            {
+                connectedDevices.Remove(formerConnectedDevices);
+            }
         }
     }
 
@@ -387,10 +413,45 @@ public class GameInput : MonoBehaviour
         return defaultPlayerInputActions;
     }
 
-    public List<string> GetAvailableControlSchemes()
+    private void UpdateAvailableControlSchemesWithConnectedDevices()
     {
-        return availableControlSchemes;
+        availableControlSchemesWithConnectedDevices = new List<string>();
+        foreach(InputDevice connectedDevice in connectedDevices)
+        {
+            //For some reason, Unity identifies my Keyboard and Mouse types as FastKeyboard and FastMouse. 
+            //However these types can’t be accessed through code and there doesn’t seem to be any documentation 
+            //on them. Instead of comairing devices types, I will compare their names.
+            if(connectedDevice.name == KEYBOARD_NAME && (availableControlSchemes.Contains(KEYBOARD_ARROWS_SCHEME) || availableControlSchemes.Contains(KEYBOARD_WASD_SCHEME)))
+            {
+                if(availableControlSchemes.Contains(KEYBOARD_ARROWS_SCHEME))
+                {
+                    availableControlSchemesWithConnectedDevices.Add(KEYBOARD_ARROWS_SCHEME);
+                }
+
+                if(availableControlSchemes.Contains(KEYBOARD_WASD_SCHEME))
+                {
+                    availableControlSchemesWithConnectedDevices.Add(KEYBOARD_WASD_SCHEME);
+                }
+            }
+            else if (connectedDevice.name == GAMEPAD_NAME && availableControlSchemes.Contains(GAMEPAD_SCHEME))
+            {
+                availableControlSchemesWithConnectedDevices.Add(GAMEPAD_SCHEME);
+            }
+        }
+        foreach(var element in availableControlSchemesWithConnectedDevices)
+        {
+            Debug.Log(element);
+        }
     }
+
+    public List<string> GetAvailableControlSchemesWithConnectedDevices()
+    {
+        UpdateConnectedDevices();
+        UpdateAvailableControlSchemesWithConnectedDevices();
+        return availableControlSchemesWithConnectedDevices;
+    }
+
+    
 
     public void SetNextPlayerControlScheme(string controlScheme)
     {
