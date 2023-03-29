@@ -5509,7 +5509,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 507405150}
-  - component: {fileID: 507405154}
   - component: {fileID: 507405153}
   - component: {fileID: 507405152}
   - component: {fileID: 507405151}
@@ -5533,13 +5532,13 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1159556336}
-  m_Father: {fileID: 1243088557}
+  m_Father: {fileID: 665083660}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 400, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &507405151
 MonoBehaviour:
@@ -5623,19 +5622,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 507405149}
   m_CullTransparentMesh: 1
---- !u!114 &507405154
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 507405149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46af42d416c268542a9753db3da22504, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controlOptionText: {fileID: 1159556337}
 --- !u!1001 &508661211
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6149,7 +6135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 1243088557}
-  controlOptionButton: {fileID: 507405150}
+  buttonHolderTemplate: {fileID: 665083660}
   resumeButton: {fileID: 854142620}
 --- !u!1 &641415997
 GameObject:
@@ -6260,6 +6246,58 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!1 &665083659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 665083660}
+  - component: {fileID: 665083661}
+  m_Layer: 5
+  m_Name: ButtonHolderTemplate
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &665083660
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665083659}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 507405150}
+  m_Father: {fileID: 1243088557}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 400, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &665083661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665083659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46af42d416c268542a9753db3da22504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controlOptionText: {fileID: 1159556337}
+  buttonTemplate: {fileID: 507405151}
 --- !u!1 &669195435
 GameObject:
   m_ObjectHideFlags: 0
@@ -8179,6 +8217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlOptionText: {fileID: 1151009817}
+  buttonTemplate: {fileID: 0}
 --- !u!1 &867254350
 GameObject:
   m_ObjectHideFlags: 0
@@ -11067,7 +11106,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 507405150}
+  - {fileID: 665083660}
   m_Father: {fileID: 641032515}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -14665,7 +14704,6 @@ MonoBehaviour:
   playerPrefab: {fileID: 7867546703291700016, guid: 880ddd33936d08340b546de024472aad,
     type: 3}
   addNewPlayerButton: {fileID: 398262920}
-  addNewPlayerScreenUI: {fileID: 641032516}
 --- !u!4 &1645857014
 Transform:
   m_ObjectHideFlags: 0

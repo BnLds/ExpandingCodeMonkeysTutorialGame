@@ -31,7 +31,6 @@ public class DeliveryManagerUI : MonoBehaviour
         UpdateVisual();
     }
 
-
     private void UpdateVisual()
     {
         foreach (Transform child in container)
@@ -46,6 +45,7 @@ public class DeliveryManagerUI : MonoBehaviour
             }
         }
 
+        
         foreach(RecipeSO recipeSO in DeliveryManager.Instance.GetWaitingRecipeSOList())
         {
             Transform recipeTransform = Instantiate(recipeTemplate, container);

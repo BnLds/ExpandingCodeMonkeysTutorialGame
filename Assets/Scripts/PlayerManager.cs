@@ -8,20 +8,18 @@ public class PlayerManager : MonoBehaviour
 
     [SerializeField] private Transform playerPrefab;
     [SerializeField] private Button addNewPlayerButton;
-    [SerializeField] private AddNewPlayerScreenUI addNewPlayerScreenUI;
 
-    public event EventHandler OnAddNewPlayer;
 
     private void Awake()
     {
         Instance = this;
 
-        addNewPlayerButton.onClick.AddListener(() => OnAddNewPlayer?.Invoke(this, EventArgs.Empty));
+        addNewPlayerButton.onClick.AddListener(() => AddNewPlayerScreenUI.Instance.ShowAndUpdateVisual());
     }
 
     private void Start()
     {
-        addNewPlayerScreenUI.OnControlOptionSelection += AddNewPlayerScreenUI_OnControlOptionSelection;
+        AddNewPlayerScreenUI.Instance.OnControlOptionSelection += AddNewPlayerScreenUI_OnControlOptionSelection;
 
     }
 

@@ -1,11 +1,15 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
 
 public class AddNewPlayerScreenUI : MonoBehaviour
 {
+
+    public static AddNewPlayerScreenUI Instance { get; private set; }
+
     [SerializeField] private Transform container;
-    [SerializeField] private Transform controlOptionButton;
+    [SerializeField] private Transform buttonHolderTemplate;
     [SerializeField] private Button resumeButton;
 
     public event EventHandler<EventArgsOnControlOptionSelection> OnControlOptionSelection;
@@ -16,72 +20,82 @@ public class AddNewPlayerScreenUI : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
         resumeButton.onClick.AddListener(() => Hide());
     }
 
     private void Start()
     {
-        PlayerManager.Instance.OnAddNewPlayer += PlayerManager_OnAddNewPlayer;
+        GameManager_.Instance.TogglePauseGame();
 
-        Show();
-
-        foreach(Transform child in container)
-        {
-            child.GetComponent<Button>().onClick.AddListener(() => SelectControlOption(child.GetComponent<ControlOptionSingleButtonUI>().GetControlOption()));
-        }
-        
-    }
-
-    private void PlayerManager_OnAddNewPlayer(object sender, EventArgs e)
-    {
-        Show();
-
+        UpdateVisual();        
     }
 
     private void UpdateVisual()
     {
+        StartCoroutine(UpdateVisualCoroutine());
+    }
+
+    private IEnumerator UpdateVisualCoroutine()
+    {
+        DeleteButtons();
+
+        // wait 1 frame for completion of Destroy method in DeleteButtons()
+        yield return new WaitForEndOfFrame();
+
+        bool isControlSchemeAvailable = GameInput.Instance.GetAvailableControlSchemes() != null;
+
+        if (isControlSchemeAvailable)
+        {
+            int numberOfControlSchemesAvailable = GameInput.Instance.GetAvailableControlSchemes().Count;
+            int numberOfNewButtonsToInstantiate = numberOfControlSchemesAvailable - 1;
+
+            for (int i = 0; i < numberOfNewButtonsToInstantiate; i++)
+            {
+                Instantiate(buttonHolderTemplate, container);
+            }
+            
+            string[] availableControlSchemesArray = new string[numberOfControlSchemesAvailable];
+            for(int i = 0; i < availableControlSchemesArray.Length; i++)
+            {
+                availableControlSchemesArray[i] = GameInput.Instance.GetAvailableControlSchemes()[i];
+            }
+
+            int availableControlSchemesArrayIndex = availableControlSchemesArray.Length-1;
+            foreach(Transform child in container)
+            {
+                child.GetComponent<ControlOptionSingleButtonUI>().SetControlOptionText(availableControlSchemesArray[availableControlSchemesArrayIndex]);
+                availableControlSchemesArrayIndex--;
+            }
+
+            AddListenerToNewButtons();
+        }
+
+        
+        yield return null;
+    }
+
+    private void AddListenerToNewButtons()
+    {
         foreach(Transform child in container)
         {
-            if(child == controlOptionButton)
+            child.GetComponent<ControlOptionSingleButtonUI>().GetButtonTemplate().GetComponent<Button>().onClick.AddListener(() => SelectControlOption(child.GetComponent<ControlOptionSingleButtonUI>().GetControlOption()));
+        }   
+    }
+
+    private void DeleteButtons()
+    {
+        foreach(Transform child in container)
+        {
+            if(child == buttonHolderTemplate)
             {
                 continue;
             }
             else
             {
                 Destroy(child.gameObject);
-                Debug.Log(child + "destroyed");
             }
         }
-
-        if (GameInput.Instance.GetAvailableControlSchemes() != null)
-        {
-
-            for (int i = 0; i < GameInput.Instance.GetAvailableControlSchemes().Count-1; i++)
-            {
-                Instantiate(controlOptionButton, container);
-            }
-            
-            string[] yetToAssignControlScheme = new string[GameInput.Instance.GetAvailableControlSchemes().Count];
-            for(int i = 0; i < GameInput.Instance.GetAvailableControlSchemes().Count; i++)
-            {
-                yetToAssignControlScheme[i] = GameInput.Instance.GetAvailableControlSchemes()[i];
-            }
-
-            int e = yetToAssignControlScheme.Length-1;
-            foreach(Transform child in container)
-            {
-                Debug.Log(child);
-                child.GetComponent<ControlOptionSingleButtonUI>().SetControlOptionText(yetToAssignControlScheme[e]);
-                e--;
-                Debug.Log(e);
-            }
-        }
-
-        
-
-
-
-
     }
 
     private void SelectControlOption(string controlSchemeSelected)
@@ -101,10 +115,10 @@ public class AddNewPlayerScreenUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void Show()
+    public void ShowAndUpdateVisual()
     {
+        gameObject.SetActive(true);
         GameManager_.Instance.TogglePauseGame();
         UpdateVisual();
-        gameObject.SetActive(true);
     }
 }
