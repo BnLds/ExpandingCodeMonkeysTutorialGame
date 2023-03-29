@@ -79,6 +79,7 @@ public class GameInput : MonoBehaviour
     private List<string> availableControlSchemes;
     private List<InputDevice> connectedDevices;
     private List<string> availableControlSchemesWithConnectedDevices;
+    private List<string> supportedDevices;
 
     private int numberOfPlayers;
     private static controlSchemesAllocation[] controlSchemesAllocationArray;
@@ -92,7 +93,8 @@ public class GameInput : MonoBehaviour
 
         numberOfPlayers = 0;
         controlSchemesAllocationArray = new controlSchemesAllocation[numberOfPlayersMax];
-        
+
+        supportedDevices = new List<string>() { KEYBOARD_NAME, GAMEPAD_NAME};
         connectedDevices = InputSystem.devices.ToList();
         availableControlSchemes = new List<string>() {KEYBOARD_WASD_SCHEME, KEYBOARD_ARROWS_SCHEME, GAMEPAD_SCHEME};
 
@@ -193,6 +195,137 @@ public class GameInput : MonoBehaviour
         return inputVector2;
     }
 
+    public PlayerInputActions SetPlayerControlScheme()
+    {
+        availableControlSchemes.Remove(nextPlayerControlScheme);
+
+        PlayerInputActions newPlayerInputActions = new PlayerInputActions();
+
+        switch(nextPlayerControlScheme)
+        {
+            default:
+                Debug.LogError("Unable to return PlayerInputActions for control scheme: "+ nextPlayerControlScheme);
+
+                InitializePlayerInputActions(newPlayerInputActions);
+                return newPlayerInputActions;
+
+            case(KEYBOARD_WASD_SCHEME):
+
+                string WASD_SchemeName = "KeyboardWASD";
+
+                InputUser newUserWASD = InputUser.PerformPairingWithDevice(Keyboard.current);
+                InputUser.PerformPairingWithDevice(Mouse.current, newUserWASD);
+                newUserWASD.AssociateActionsWithUser(newPlayerInputActions);
+                newUserWASD.ActivateControlScheme(WASD_SchemeName);
+                newPlayerInputActions.Enable();
+
+                InitializePlayerInputActions(newPlayerInputActions);
+                Debug.Log("returned PlayerInputActions for " + KEYBOARD_WASD_SCHEME);
+                return newPlayerInputActions;
+
+            case(KEYBOARD_ARROWS_SCHEME):
+
+                string Arrows_SchemeName = "KeyboardArrows";
+
+                InputUser newUserArrows = InputUser.PerformPairingWithDevice(Keyboard.current);
+                InputUser.PerformPairingWithDevice(Mouse.current, newUserArrows);
+                newUserArrows.AssociateActionsWithUser(newPlayerInputActions);
+                newUserArrows.ActivateControlScheme(Arrows_SchemeName);
+                newPlayerInputActions.Enable();
+
+                InitializePlayerInputActions(newPlayerInputActions);
+
+                return newPlayerInputActions;
+            
+            case(GAMEPAD_SCHEME):
+
+                string Gamepad_SchemeName = "Gamepad";
+
+                InputUser newUserGamepad = InputUser.PerformPairingWithDevice(Gamepad.all[0]);
+                newUserGamepad.AssociateActionsWithUser(newPlayerInputActions);
+                newUserGamepad.ActivateControlScheme(Gamepad_SchemeName);
+                newPlayerInputActions.Enable();
+
+                InitializePlayerInputActions(newPlayerInputActions);
+
+                return newPlayerInputActions;
+        }
+    }
+
+    public int GetNumberOfPlayers()
+    {
+        return numberOfPlayers;
+    }
+
+    public bool isActionMine(InputAction.CallbackContext obj, PlayerInputActions playerInputActions)
+    {    
+        return (playerInputActions.Contains(obj.action));
+    }
+ 
+    public PlayerInputActions GetDefaultPlayerInputActions()
+    {
+        return defaultPlayerInputActions;
+    }
+
+    private void UpdateAvailableControlSchemesWithConnectedDevices()
+    {
+        availableControlSchemesWithConnectedDevices = new List<string>();
+        foreach(InputDevice connectedDevice in connectedDevices)
+        {
+            //For some reason, Unity identifies my Keyboard and Mouse types as FastKeyboard and FastMouse. 
+            //However these types can’t be accessed through code and there doesn’t seem to be any documentation 
+            //on them. Instead of comairing devices types, I will compare their names.
+            if(connectedDevice.name == KEYBOARD_NAME && (availableControlSchemes.Contains(KEYBOARD_ARROWS_SCHEME) || availableControlSchemes.Contains(KEYBOARD_WASD_SCHEME)))
+            {
+                if(availableControlSchemes.Contains(KEYBOARD_ARROWS_SCHEME))
+                {
+                    availableControlSchemesWithConnectedDevices.Add(KEYBOARD_ARROWS_SCHEME);
+                }
+
+                if(availableControlSchemes.Contains(KEYBOARD_WASD_SCHEME))
+                {
+                    availableControlSchemesWithConnectedDevices.Add(KEYBOARD_WASD_SCHEME);
+                }
+            }
+            else if (connectedDevice.name == GAMEPAD_NAME && availableControlSchemes.Contains(GAMEPAD_SCHEME))
+            {
+                availableControlSchemesWithConnectedDevices.Add(GAMEPAD_SCHEME);
+            }
+        }
+        foreach(var element in availableControlSchemesWithConnectedDevices)
+        {
+            Debug.Log(element);
+        }
+    }
+
+    public List<string> GetAvailableControlSchemesWithConnectedDevices()
+    {
+        UpdateConnectedDevices();
+        UpdateAvailableControlSchemesWithConnectedDevices();
+        return availableControlSchemesWithConnectedDevices;
+    }
+
+    public List<string> GetSupportedDevicesNotConnected()
+    {
+        List<string> supportedDevicesNotConnected = supportedDevices;
+        UpdateConnectedDevices();
+        foreach(InputDevice device in connectedDevices)
+        {
+            if(supportedDevicesNotConnected.Contains(device.name))
+            {
+                supportedDevicesNotConnected.Remove(device.name);
+            }
+        }
+
+        return supportedDevicesNotConnected;
+    } 
+
+    public void SetNextPlayerControlScheme(string controlScheme)
+    {
+        nextPlayerControlScheme = controlScheme;
+    }
+
+#region Binding
     public string GetBindingText(Binding binding)
     {
         switch(binding)
@@ -341,121 +474,6 @@ public class GameInput : MonoBehaviour
         }
     }
 
-    public PlayerInputActions SetPlayerControlScheme()
-    {
-        availableControlSchemes.Remove(nextPlayerControlScheme);
-
-        PlayerInputActions newPlayerInputActions = new PlayerInputActions();
-
-        switch(nextPlayerControlScheme)
-        {
-            default:
-                Debug.LogError("Unable to return PlayerInputActions for control scheme: "+ nextPlayerControlScheme);
-
-                InitializePlayerInputActions(newPlayerInputActions);
-                return newPlayerInputActions;
-
-            case(KEYBOARD_WASD_SCHEME):
-
-                string WASD_SchemeName = "KeyboardWASD";
-
-                InputUser newUserWASD = InputUser.PerformPairingWithDevice(Keyboard.current);
-                InputUser.PerformPairingWithDevice(Mouse.current, newUserWASD);
-                newUserWASD.AssociateActionsWithUser(newPlayerInputActions);
-                newUserWASD.ActivateControlScheme(WASD_SchemeName);
-                newPlayerInputActions.Enable();
-
-                InitializePlayerInputActions(newPlayerInputActions);
-                Debug.Log("returned PlayerInputActions for " + KEYBOARD_WASD_SCHEME);
-                return newPlayerInputActions;
-
-            case(KEYBOARD_ARROWS_SCHEME):
-
-                string Arrows_SchemeName = "KeyboardArrows";
-
-                InputUser newUserArrows = InputUser.PerformPairingWithDevice(Keyboard.current);
-                InputUser.PerformPairingWithDevice(Mouse.current, newUserArrows);
-                newUserArrows.AssociateActionsWithUser(newPlayerInputActions);
-                newUserArrows.ActivateControlScheme(Arrows_SchemeName);
-                newPlayerInputActions.Enable();
-
-                InitializePlayerInputActions(newPlayerInputActions);
-
-                return newPlayerInputActions;
-            
-            case(GAMEPAD_SCHEME):
-
-                string Gamepad_SchemeName = "Gamepad";
-
-                InputUser newUserGamepad = InputUser.PerformPairingWithDevice(Gamepad.all[0]);
-                newUserGamepad.AssociateActionsWithUser(newPlayerInputActions);
-                newUserGamepad.ActivateControlScheme(Gamepad_SchemeName);
-                newPlayerInputActions.Enable();
-
-                InitializePlayerInputActions(newPlayerInputActions);
-
-                return newPlayerInputActions;
-        }
-    }
-
-    public int GetNumberOfPlayers()
-    {
-        return numberOfPlayers;
-    }
-
-    public bool isActionMine(InputAction.CallbackContext obj, PlayerInputActions playerInputActions)
-    {    
-        return (playerInputActions.Contains(obj.action));
-    }
- 
-    public PlayerInputActions GetDefaultPlayerInputActions()
-    {
-        return defaultPlayerInputActions;
-    }
-
-    private void UpdateAvailableControlSchemesWithConnectedDevices()
-    {
-        availableControlSchemesWithConnectedDevices = new List<string>();
-        foreach(InputDevice connectedDevice in connectedDevices)
-        {
-            //For some reason, Unity identifies my Keyboard and Mouse types as FastKeyboard and FastMouse. 
-            //However these types can’t be accessed through code and there doesn’t seem to be any documentation 
-            //on them. Instead of comairing devices types, I will compare their names.
-            if(connectedDevice.name == KEYBOARD_NAME && (availableControlSchemes.Contains(KEYBOARD_ARROWS_SCHEME) || availableControlSchemes.Contains(KEYBOARD_WASD_SCHEME)))
-            {
-                if(availableControlSchemes.Contains(KEYBOARD_ARROWS_SCHEME))
-                {
-                    availableControlSchemesWithConnectedDevices.Add(KEYBOARD_ARROWS_SCHEME);
-                }
-
-                if(availableControlSchemes.Contains(KEYBOARD_WASD_SCHEME))
-                {
-                    availableControlSchemesWithConnectedDevices.Add(KEYBOARD_WASD_SCHEME);
-                }
-            }
-            else if (connectedDevice.name == GAMEPAD_NAME && availableControlSchemes.Contains(GAMEPAD_SCHEME))
-            {
-                availableControlSchemesWithConnectedDevices.Add(GAMEPAD_SCHEME);
-            }
-        }
-        foreach(var element in availableControlSchemesWithConnectedDevices)
-        {
-            Debug.Log(element);
-        }
-    }
-
-    public List<string> GetAvailableControlSchemesWithConnectedDevices()
-    {
-        UpdateConnectedDevices();
-        UpdateAvailableControlSchemesWithConnectedDevices();
-        return availableControlSchemesWithConnectedDevices;
-    }
-
-    
-
-    public void SetNextPlayerControlScheme(string controlScheme)
-    {
-        nextPlayerControlScheme = controlScheme;
-    }
+#endregion
 
 }
