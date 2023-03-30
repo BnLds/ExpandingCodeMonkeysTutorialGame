@@ -81,13 +81,16 @@ public class GameInput : MonoBehaviour
     public struct ControlScheme_RequiredDevices
     {
         public string bindingGroupName;
-        public InputControlScheme.DeviceRequirement[] requiredDevices;
+        public List<string> requiredDevices;
+        public bool isAvailableForUse;
 
-        public ControlScheme_RequiredDevices(string bindingGroupName, InputControlScheme.DeviceRequirement[] requiredDevices)
+        public ControlScheme_RequiredDevices(string bindingGroupName, List<string> requiredDevices, bool isAvailableForUse)
         {
             this.bindingGroupName = bindingGroupName;
             this.requiredDevices = requiredDevices;
+            this.isAvailableForUse = isAvailableForUse;
         }
+        
     }
 
     private List<string> availableControlSchemes;
@@ -101,18 +104,14 @@ public class GameInput : MonoBehaviour
     private static ControlSchemesAllocation[] controlSchemesAllocationArray;
     private int numberOfPlayersMax = 3;
     private PlayerInputActions defaultPlayerInputActions;
-    private string nextPlayerControlScheme;
+    private string nextPlayerControlSchemeName;
 
     private void Awake() 
     {
         Instance = this;
 
         defaultPlayerInputActions = new PlayerInputActions();
-        /*foreach(InputControlScheme controlScheme in defaultPlayerInputActions.controlSchemes)
-            {
-                Debug.Log(controlScheme.bindingGroup + controlScheme.deviceRequirements);
-            }
-        */
+
         numberOfPlayers = 0;
         controlSchemesAllocationArray = new ControlSchemesAllocation[numberOfPlayersMax];
 
@@ -131,13 +130,15 @@ public class GameInput : MonoBehaviour
         for (int i = 0; i < defaultPlayerInputActions.controlSchemes.Count; i++)
         {
             availableControlSchemes_RequiredDevices[i].bindingGroupName = defaultPlayerInputActions.controlSchemes[i].bindingGroup;
-            availableControlSchemes_RequiredDevices[i].requiredDevices = new InputControlScheme.DeviceRequirement[defaultPlayerInputActions.controlSchemes[i].deviceRequirements.Count];
+            availableControlSchemes_RequiredDevices[i].isAvailableForUse = true;
+            availableControlSchemes_RequiredDevices[i].requiredDevices = new List<string>();
+
             for (int j = 0; j < defaultPlayerInputActions.controlSchemes[i].deviceRequirements.Count; j++)
             {
-                availableControlSchemes_RequiredDevices[i].requiredDevices[j] = defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j];
+                availableControlSchemes_RequiredDevices[i].requiredDevices.Add(GetRequiredDeviceNameFromDeviceRequirement(defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j]));
 
                 //Store supported devices in the list supportedDevices
-                string deviceName = defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j].ToString().Substring(defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j].ToString().IndexOf("<")+1, defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j].ToString().IndexOf(">")-1);
+                string deviceName = GetRequiredDeviceNameFromDeviceRequirement(defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j]);
                 if(!supportedDevices.Contains(deviceName))
                 {
                     supportedDevices.Add(deviceName);
@@ -246,14 +247,19 @@ public class GameInput : MonoBehaviour
 
     public PlayerInputActions SetPlayerControlScheme()
     {
-        availableControlSchemes.Remove(nextPlayerControlScheme);
+        availableControlSchemes.Remove(nextPlayerControlSchemeName);
+        /*ControlScheme_RequiredDevices nextPlayerControlScheme = availableControlSchemes_RequiredDevices.First(scheme => scheme.bindingGroupName == nextPlayerControlSchemeName);
+        Debug.Log(nextPlayerControlScheme.bindingGroupName);
+        Debug.Log(nextPlayerControlScheme.requiredDevices);
+        Debug.Log(nextPlayerControlScheme.isAvailableForUse);
+        */
 
         PlayerInputActions newPlayerInputActions = new PlayerInputActions();
 
-        switch(nextPlayerControlScheme)
+        switch(nextPlayerControlSchemeName)
         {
             default:
-                Debug.LogError("Unable to return PlayerInputActions for control scheme: "+ nextPlayerControlScheme);
+                Debug.LogError("Unable to return PlayerInputActions for control scheme: "+ nextPlayerControlSchemeName);
 
                 InitializePlayerInputActions(newPlayerInputActions);
                 return newPlayerInputActions;
@@ -323,7 +329,7 @@ public class GameInput : MonoBehaviour
         {
             //For some reason, Unity identifies my Keyboard and Mouse types as FastKeyboard and FastMouse. 
             //However these types can’t be accessed through code and there doesn’t seem to be any documentation 
-            //on them. Instead of comairing devices types, I will compare their names.
+            //on them. Instead of comparing devices types, I will compare their names.
             if(connectedDevice.name == KEYBOARD_NAME && (availableControlSchemes.Contains(KEYBOARD_ARROWS_SCHEME) || availableControlSchemes.Contains(KEYBOARD_WASD_SCHEME)))
             {
                 if(availableControlSchemes.Contains(KEYBOARD_ARROWS_SCHEME))
@@ -340,7 +346,20 @@ public class GameInput : MonoBehaviour
             {
                 availableControlSchemesWithConnectedDevices.Add(GAMEPAD_SCHEME);
             }
+
+        //ControlScheme_RequiredDevices nextPlayerControlScheme = availableControlSchemes_RequiredDevices.First(scheme => scheme.bindingGroupName == nextPlayerControlSchemeName);
+           /* foreach(ControlScheme_RequiredDevices controlScheme_RequiredDevices in availableControlSchemes_RequiredDevices)
+            {
+                if(availableControlSchemes_RequiredDevices.Contains(scheme => scheme.requiredDevices. ))
+            }*/
+
+
         }
+    }
+
+    private string GetRequiredDeviceNameFromDeviceRequirement(InputControlScheme.DeviceRequirement deviceRequirement)
+    {
+        return deviceRequirement.ToString().Substring(deviceRequirement.ToString().IndexOf("<") + 1, deviceRequirement.ToString().IndexOf(">") - 1);
     }
 
     public List<string> GetAvailableControlSchemesWithConnectedDevices()
@@ -365,7 +384,7 @@ public class GameInput : MonoBehaviour
 
     public void SetNextPlayerControlScheme(string controlScheme)
     {
-        nextPlayerControlScheme = controlScheme;
+        nextPlayerControlSchemeName = controlScheme;
     }
 
 #region Binding
