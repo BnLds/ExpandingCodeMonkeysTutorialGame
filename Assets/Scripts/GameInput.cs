@@ -64,13 +64,13 @@ public class GameInput : MonoBehaviour
         Gamepad
     }
 
-    public struct controlSchemesAllocation
+    public struct ControlSchemesAllocation
     {
         public int playerID;
         public PlayerInputActions playerInputActions;
         //public InputDevice inputDevice;
 
-        public controlSchemesAllocation(int playerID, PlayerInputActions playerInputActions/*, InputDevice inputDevice*/)
+        public ControlSchemesAllocation(int playerID, PlayerInputActions playerInputActions/*, InputDevice inputDevice*/)
         {
             this.playerID = playerID;
             this.playerInputActions = playerInputActions;
@@ -78,13 +78,27 @@ public class GameInput : MonoBehaviour
         }
     }
 
+    public struct ControlScheme_RequiredDevices
+    {
+        public string bindingGroupName;
+        public InputControlScheme.DeviceRequirement[] requiredDevices;
+
+        public ControlScheme_RequiredDevices(string bindingGroupName, InputControlScheme.DeviceRequirement[] requiredDevices)
+        {
+            this.bindingGroupName = bindingGroupName;
+            this.requiredDevices = requiredDevices;
+        }
+    }
+
     private List<string> availableControlSchemes;
+    private static ControlScheme_RequiredDevices[] availableControlSchemes_RequiredDevices;
     private List<InputDevice> connectedDevices;
     private List<string> availableControlSchemesWithConnectedDevices;
     private List<string> supportedDevices;
+    private List<string> supportedDevicesNotConnected;
 
     private int numberOfPlayers;
-    private static controlSchemesAllocation[] controlSchemesAllocationArray;
+    private static ControlSchemesAllocation[] controlSchemesAllocationArray;
     private int numberOfPlayersMax = 3;
     private PlayerInputActions defaultPlayerInputActions;
     private string nextPlayerControlScheme;
@@ -93,15 +107,45 @@ public class GameInput : MonoBehaviour
     {
         Instance = this;
 
+        defaultPlayerInputActions = new PlayerInputActions();
+        /*foreach(InputControlScheme controlScheme in defaultPlayerInputActions.controlSchemes)
+            {
+                Debug.Log(controlScheme.bindingGroup + controlScheme.deviceRequirements);
+            }
+        */
         numberOfPlayers = 0;
-        controlSchemesAllocationArray = new controlSchemesAllocation[numberOfPlayersMax];
+        controlSchemesAllocationArray = new ControlSchemesAllocation[numberOfPlayersMax];
 
-        supportedDevices = new List<string>() { KEYBOARD_NAME, GAMEPAD_NAME};
+        supportedDevices = new List<string>();
+
         connectedDevices = InputSystem.devices.ToList();
+        
         availableControlSchemes = new List<string>() {KEYBOARD_WASD_SCHEME, KEYBOARD_ARROWS_SCHEME, GAMEPAD_SCHEME};
 
-        defaultPlayerInputActions = new PlayerInputActions();
+        availableControlSchemes_RequiredDevices = new ControlScheme_RequiredDevices[defaultPlayerInputActions.controlSchemes.Count];
+        foreach(InputControlScheme controlScheme in defaultPlayerInputActions.controlSchemes)
+        {
+            availableControlSchemes.Add(controlScheme.bindingGroup);
+        }
 
+        for (int i = 0; i < defaultPlayerInputActions.controlSchemes.Count; i++)
+        {
+            availableControlSchemes_RequiredDevices[i].bindingGroupName = defaultPlayerInputActions.controlSchemes[i].bindingGroup;
+            availableControlSchemes_RequiredDevices[i].requiredDevices = new InputControlScheme.DeviceRequirement[defaultPlayerInputActions.controlSchemes[i].deviceRequirements.Count];
+            for (int j = 0; j < defaultPlayerInputActions.controlSchemes[i].deviceRequirements.Count; j++)
+            {
+                availableControlSchemes_RequiredDevices[i].requiredDevices[j] = defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j];
+
+                //Store supported devices in the list supportedDevices
+                string deviceName = defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j].ToString().Substring(defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j].ToString().IndexOf("<")+1, defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j].ToString().IndexOf(">")-1);
+                if(!supportedDevices.Contains(deviceName))
+                {
+                    supportedDevices.Add(deviceName);
+                }
+            }
+        }
+
+        //Load saved binding preferences
         if(PlayerPrefs.HasKey(PLAYER_PREFS_BINDINGS))
         {
             defaultPlayerInputActions.LoadBindingOverridesFromJson(PlayerPrefs.GetString(PLAYER_PREFS_BINDINGS));
@@ -134,7 +178,7 @@ public class GameInput : MonoBehaviour
     {
         numberOfPlayers++;
 
-        controlSchemesAllocationArray[numberOfPlayers-1] = new controlSchemesAllocation(numberOfPlayers, playerInputActions);
+        controlSchemesAllocationArray[numberOfPlayers-1] = new ControlSchemesAllocation(numberOfPlayers, playerInputActions);
         
         LoadPlayerPrefs(playerInputActions);
         SubscribeToInputActions(playerInputActions);
@@ -307,7 +351,7 @@ public class GameInput : MonoBehaviour
 
     public List<string> GetSupportedDevicesNotConnected()
     {
-        List<string> supportedDevicesNotConnected = supportedDevices;
+        supportedDevicesNotConnected = new List<string>(supportedDevices);
         foreach(InputDevice device in connectedDevices)
         {
             if(supportedDevicesNotConnected.Contains(device.name))
@@ -464,7 +508,7 @@ public class GameInput : MonoBehaviour
     {
         LoadPlayerPrefs(defaultPlayerInputActions);
 
-        foreach (controlSchemesAllocation allocation in controlSchemesAllocationArray)
+        foreach (ControlSchemesAllocation allocation in controlSchemesAllocationArray)
         {
             if (allocation.playerInputActions != null)
             {

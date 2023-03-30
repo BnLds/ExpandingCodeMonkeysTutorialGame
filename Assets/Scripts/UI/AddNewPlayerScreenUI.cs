@@ -66,31 +66,40 @@ public class AddNewPlayerScreenUI : MonoBehaviour
             }
 
             AddListenerToNewButtons();
-
-            //Notify player more controls are available
-            if(GameInput.Instance.GetSupportedDevicesNotConnected() == null)
-            {
-                connectControlText.gameObject.SetActive(false);
-            }
-            else if(GameInput.Instance.GetSupportedDevicesNotConnected().Count == 1)
-            {
-                connectControlText.gameObject.SetActive(true);
-                string deviceName = GameInput.Instance.GetSupportedDevicesNotConnected()[0];
-                connectControlText.text = "Connect a "+ deviceName + " to enable "+ deviceName +" controls.";
-
-            }
-            else
-            {
-                connectControlText.gameObject.SetActive(true);
-                string deviceNames = GameInput.Instance.GetSupportedDevicesNotConnected()[0];
-                for (int i = 1; i<GameInput.Instance.GetSupportedDevicesNotConnected().Count; i++)
-                {
-                    deviceNames += " or " + GameInput.Instance.GetSupportedDevicesNotConnected()[i];
-                }
-                connectControlText.text = "Connect a "+ deviceNames + " to enable "+ deviceNames +" controls."; 
-            }
+            UpdateMessageToPlayerToConnectDevices();
+        }
+        else
+        {
+            buttonTemplate.GetComponent<ControlOptionSingleButtonUI>().SetControlOptionText("There is no additional control option available.");
+            UpdateMessageToPlayerToConnectDevices();
         }
         yield return null;
+    }
+
+    private void UpdateMessageToPlayerToConnectDevices()
+    {
+        //Notify player more controls are available
+        if(GameInput.Instance.GetSupportedDevicesNotConnected() == null)
+        {
+            connectControlText.gameObject.SetActive(false);
+        }
+        else if(GameInput.Instance.GetSupportedDevicesNotConnected().Count == 1)
+        {
+            connectControlText.gameObject.SetActive(true);
+            string deviceName = GameInput.Instance.GetSupportedDevicesNotConnected()[0];
+            connectControlText.text = "Connect a "+ deviceName + " to enable "+ deviceName +" controls.";
+
+        }
+        else
+        {
+            connectControlText.gameObject.SetActive(true);
+            string deviceNames = GameInput.Instance.GetSupportedDevicesNotConnected()[0];
+            for (int i = 1; i<GameInput.Instance.GetSupportedDevicesNotConnected().Count; i++)
+            {
+                deviceNames += " or " + GameInput.Instance.GetSupportedDevicesNotConnected()[i];
+            }
+            connectControlText.text = "Connect a "+ deviceNames + " to enable "+ deviceNames +" controls."; 
+        }
     }
 
     private void AddListenerToNewButtons()
