@@ -6,51 +6,37 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Users;
 using System.Linq;
 
-public struct ControlSchemesAllocation
-{
-    public int playerID;
-    public PlayerInputActions playerInputActions;
-    //public InputDevice inputDevice;
-
-    public ControlSchemesAllocation(int playerID, PlayerInputActions playerInputActions)
+public struct ControlSchemeParameters
     {
-        this.playerID = playerID;
-        this.playerInputActions = playerInputActions;
+        public string bindingGroupName;
+        public List<string> requiredDevices;
+        public bool isAvailableForNewPlayer;
+        public int playerID;
+        public PlayerInputActions playerInputActions;
+
+        public ControlSchemeParameters(string bindingGroupName, List<string> requiredDevices, bool isAvailableForNewPlayer, int playerID, PlayerInputActions playerInputActions)
+        {
+            this.bindingGroupName = bindingGroupName;
+            this.requiredDevices = requiredDevices;
+            this.isAvailableForNewPlayer = isAvailableForNewPlayer;
+            this.playerID = playerID;
+            this.playerInputActions = playerInputActions;
+        }
     }
-}
 
 public class GameControlsManager : MonoBehaviour
 {
     public static GameControlsManager Instance { get; private set; }
 
-    private const string KEYBOARD_WASD_SCHEME = "KeyboardWASD";
-    private const string KEYBOARD_ARROWS_SCHEME = "KeyboardArrows";
-    private const string GAMEPAD_SCHEME = "Gamepad";
-
-    public struct ControlSchemeParameters
-    {
-        public string bindingGroupName;
-        public List<string> requiredDevices;
-        public bool isAvailableForNewPlayer;
-
-        public ControlSchemeParameters(string bindingGroupName, List<string> requiredDevices, bool isAvailableForNewPlayer)
-        {
-            this.bindingGroupName = bindingGroupName;
-            this.requiredDevices = requiredDevices;
-            this.isAvailableForNewPlayer = isAvailableForNewPlayer;
-        }
-        
-    }
+    [SerializeField] private int numberOfPlayersMax = 3;
 
     private static ControlSchemeParameters[] allControlSchemesParameters;
     private List<InputDevice> connectedDevices;
     private List<string> availableControlSchemesWithConnectedDevices;
     private List<string> supportedDevices;
     private List<string> supportedDevicesNotConnected;
-    private static ControlSchemesAllocation[] controlSchemesAllocationArray;
     private string nextPlayerControlSchemeName;
     private int numberOfPlayers;
-    private int numberOfPlayersMax = 3;
 
     private void Awake()
     {
@@ -58,7 +44,6 @@ public class GameControlsManager : MonoBehaviour
         Instance = this;
 
         numberOfPlayers = 0;
-        controlSchemesAllocationArray = new ControlSchemesAllocation[numberOfPlayersMax];
         supportedDevices = new List<string>();
         connectedDevices = InputSystem.devices.ToList();
 
@@ -110,10 +95,11 @@ public class GameControlsManager : MonoBehaviour
     */
     public PlayerInputActions SetPlayerControlScheme()
     {
-        int index = Array.FindIndex(allControlSchemesParameters, scheme => scheme.bindingGroupName == nextPlayerControlSchemeName);
-        allControlSchemesParameters[index].isAvailableForNewPlayer = false;
-        string bindingGroupName = allControlSchemesParameters[index].bindingGroupName;
-        List<string> devices = allControlSchemesParameters[index].requiredDevices;
+        int indexControlsNextPlayer = Array.FindIndex(allControlSchemesParameters, scheme => scheme.bindingGroupName == nextPlayerControlSchemeName);
+        allControlSchemesParameters[indexControlsNextPlayer].isAvailableForNewPlayer = false;
+
+        string bindingGroupName = allControlSchemesParameters[indexControlsNextPlayer].bindingGroupName;
+        List<string> devices = allControlSchemesParameters[indexControlsNextPlayer].requiredDevices;
 
         PlayerInputActions newPlayerInputActions = new PlayerInputActions();
         InputUser newInputUser = new InputUser();
@@ -137,7 +123,9 @@ public class GameControlsManager : MonoBehaviour
         newPlayerInputActions.Enable();
 
         numberOfPlayers++;
-        controlSchemesAllocationArray[numberOfPlayers-1] = new ControlSchemesAllocation(numberOfPlayers, newPlayerInputActions);
+        allControlSchemesParameters[indexControlsNextPlayer].playerID = numberOfPlayers;
+        allControlSchemesParameters[indexControlsNextPlayer].playerInputActions = newPlayerInputActions;
+
         GameInput.Instance.InitializePlayerInputActions(newPlayerInputActions);
 
         return newPlayerInputActions;
@@ -178,9 +166,9 @@ public class GameControlsManager : MonoBehaviour
         return supportedDevicesNotConnected;
     } 
 
-    public ControlSchemesAllocation[] GetControlSchemesAllocationsArray()
+    public ControlSchemeParameters[] GetAllControlSchemeParameters()
     {
-        return controlSchemesAllocationArray;
+        return allControlSchemesParameters;
     }
 
     public void SetNextPlayerControlScheme(string controlScheme)
@@ -188,9 +176,9 @@ public class GameControlsManager : MonoBehaviour
         nextPlayerControlSchemeName = controlScheme;
     }
 
-    public int GetNumberOfPlayers()
+    public bool IsNumberOfPlayersMaxReached()
     {
-        return numberOfPlayers;
+        return !(numberOfPlayers<numberOfPlayersMax);
     }
 
 

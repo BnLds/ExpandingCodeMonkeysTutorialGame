@@ -285,11 +285,11 @@ public class GameInput : MonoBehaviour
     {
         LoadPlayerPrefs(defaultPlayerInputActions);
 
-        foreach (ControlSchemesAllocation allocation in GameControlsManager.Instance.GetControlSchemesAllocationsArray())
+        foreach (ControlSchemeParameters controlSchemeParameters in GameControlsManager.Instance.GetAllControlSchemeParameters())
         {
-            if (allocation.playerInputActions != null)
+            if (controlSchemeParameters.playerInputActions != null)
             {
-                LoadPlayerPrefs(allocation.playerInputActions);
+                LoadPlayerPrefs(controlSchemeParameters.playerInputActions);
             }
         }
     }
