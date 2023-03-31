@@ -13,6 +13,10 @@ public class AddNewPlayerScreenUI : MonoBehaviour
     [SerializeField] private Transform buttonTemplate;
     [SerializeField] private Button resumeButton;
     [SerializeField] private TextMeshProUGUI connectControlText;
+    [SerializeField] private Transform maxPlayerReachedScreen;
+    [SerializeField] private Button resumeButtonMaxPlayerReached;
+
+
 
     public event EventHandler<EventArgsOnControlOptionSelection> OnControlOptionSelection;
     public class EventArgsOnControlOptionSelection : EventArgs
@@ -23,7 +27,7 @@ public class AddNewPlayerScreenUI : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        resumeButton.onClick.AddListener(() => Hide());
+        resumeButton.onClick.AddListener(Hide);
     }
 
     private void Start()
@@ -35,7 +39,17 @@ public class AddNewPlayerScreenUI : MonoBehaviour
 
     private void UpdateVisual()
     {
-        StartCoroutine(UpdateVisualCoroutine());
+        if(GameControlsManager.Instance.IsNumberOfPlayersMaxReached())
+        {
+            maxPlayerReachedScreen.gameObject.SetActive(true);
+            resumeButtonMaxPlayerReached.onClick.RemoveAllListeners();
+            resumeButtonMaxPlayerReached.onClick.AddListener(Hide);
+        }
+        else
+        {
+            maxPlayerReachedScreen.gameObject.SetActive(false);
+            StartCoroutine(UpdateVisualCoroutine());
+        }
     }
 
     private IEnumerator UpdateVisualCoroutine()
