@@ -87,7 +87,7 @@ public class GameControlsManager : MonoBehaviour
                 }
             }
         }
-        
+
         //InputSystem.onDeviceChange += InputSystem_OnDeviceChange;
 
     }
@@ -112,64 +112,35 @@ public class GameControlsManager : MonoBehaviour
     {
         int index = Array.FindIndex(allControlSchemesParameters, scheme => scheme.bindingGroupName == nextPlayerControlSchemeName);
         allControlSchemesParameters[index].isAvailableForNewPlayer = false;
+        string bindingGroupName = allControlSchemesParameters[index].bindingGroupName;
+        List<string> devices = allControlSchemesParameters[index].requiredDevices;
 
         PlayerInputActions newPlayerInputActions = new PlayerInputActions();
+        InputUser newInputUser = new InputUser();
 
-        switch(nextPlayerControlSchemeName)
+        foreach(string supportedDevice in supportedDevices)
         {
-            default:
-                Debug.LogError("Unable to return PlayerInputActions for control scheme: "+ nextPlayerControlSchemeName);
-
-                GameInput.Instance.InitializePlayerInputActions(newPlayerInputActions);
-                return newPlayerInputActions;
-
-            case(KEYBOARD_WASD_SCHEME):
-
-                string WASD_SchemeName = "KeyboardWASD";
-
-                InputUser newUserWASD = InputUser.PerformPairingWithDevice(Keyboard.current);
-                InputUser.PerformPairingWithDevice(Mouse.current, newUserWASD);
-                newUserWASD.AssociateActionsWithUser(newPlayerInputActions);
-                newUserWASD.ActivateControlScheme(WASD_SchemeName);
-                newPlayerInputActions.Enable();
-
-                numberOfPlayers++;
-                controlSchemesAllocationArray[numberOfPlayers-1] = new ControlSchemesAllocation(numberOfPlayers, newPlayerInputActions);
-                GameInput.Instance.InitializePlayerInputActions(newPlayerInputActions);
-
-                return newPlayerInputActions;
-
-            case(KEYBOARD_ARROWS_SCHEME):
-
-                string Arrows_SchemeName = "KeyboardArrows";
-
-                InputUser newUserArrows = InputUser.PerformPairingWithDevice(Keyboard.current);
-                InputUser.PerformPairingWithDevice(Mouse.current, newUserArrows);
-                newUserArrows.AssociateActionsWithUser(newPlayerInputActions);
-                newUserArrows.ActivateControlScheme(Arrows_SchemeName);
-                newPlayerInputActions.Enable();
-
-                numberOfPlayers++;
-                controlSchemesAllocationArray[numberOfPlayers-1] = new ControlSchemesAllocation(numberOfPlayers, newPlayerInputActions);
-                GameInput.Instance.InitializePlayerInputActions(newPlayerInputActions);
-
-                return newPlayerInputActions;
-            
-            case(GAMEPAD_SCHEME):
-
-                string Gamepad_SchemeName = "Gamepad";
-
-                InputUser newUserGamepad = InputUser.PerformPairingWithDevice(Gamepad.all[0]);
-                newUserGamepad.AssociateActionsWithUser(newPlayerInputActions);
-                newUserGamepad.ActivateControlScheme(Gamepad_SchemeName);
-                newPlayerInputActions.Enable();
-                
-                numberOfPlayers++;
-                controlSchemesAllocationArray[numberOfPlayers-1] = new ControlSchemesAllocation(numberOfPlayers, newPlayerInputActions);
-                GameInput.Instance.InitializePlayerInputActions(newPlayerInputActions);
-
-                return newPlayerInputActions;
+            if(devices.Contains(supportedDevice))
+            {
+                InputDevice connectedDevice = connectedDevices.First(device => device.name == supportedDevice);
+                newInputUser = InputUser.PerformPairingWithDevice(connectedDevice);
+            }
         }
+
+        if(newInputUser.pairedDevices.Count == 0)
+        {
+            Debug.LogError("Trying to generate new PlayerInputActions but there is no relevant supported device connected");
+        }
+
+        newInputUser.AssociateActionsWithUser(newPlayerInputActions);
+        newInputUser.ActivateControlScheme(bindingGroupName);
+        newPlayerInputActions.Enable();
+
+        numberOfPlayers++;
+        controlSchemesAllocationArray[numberOfPlayers-1] = new ControlSchemesAllocation(numberOfPlayers, newPlayerInputActions);
+        GameInput.Instance.InitializePlayerInputActions(newPlayerInputActions);
+
+        return newPlayerInputActions;
     }
 
     public List<string> GetAvailableControlSchemesWithConnectedDevices()
