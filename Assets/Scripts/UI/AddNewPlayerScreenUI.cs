@@ -45,7 +45,7 @@ public class AddNewPlayerScreenUI : MonoBehaviour
         // wait 1 frame for completion of Destroy method in DeleteButtons()
         yield return new WaitForEndOfFrame();
 
-        List<string> availableControlSchemes = GameInput.Instance.GetAvailableControlSchemesWithConnectedDevices();
+        List<string> availableControlSchemes = GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices();
         bool isControlSchemeAvailable = availableControlSchemes.Count != 0;
 
         if (isControlSchemeAvailable)
@@ -79,24 +79,24 @@ public class AddNewPlayerScreenUI : MonoBehaviour
     private void UpdateMessageToPlayerToConnectDevices()
     {
         //Notify player more controls are available
-        if(GameInput.Instance.GetSupportedDevicesNotConnected() == null)
+        if(GameControlsManager.Instance.GetSupportedDevicesNotConnected() == null)
         {
             connectControlText.gameObject.SetActive(false);
         }
-        else if(GameInput.Instance.GetSupportedDevicesNotConnected().Count == 1)
+        else if(GameControlsManager.Instance.GetSupportedDevicesNotConnected().Count == 1)
         {
             connectControlText.gameObject.SetActive(true);
-            string deviceName = GameInput.Instance.GetSupportedDevicesNotConnected()[0];
+            string deviceName = GameControlsManager.Instance.GetSupportedDevicesNotConnected()[0];
             connectControlText.text = "Connect a "+ deviceName + " to enable "+ deviceName +" controls.";
 
         }
         else
         {
             connectControlText.gameObject.SetActive(true);
-            string deviceNames = GameInput.Instance.GetSupportedDevicesNotConnected()[0];
-            for (int i = 1; i<GameInput.Instance.GetSupportedDevicesNotConnected().Count; i++)
+            string deviceNames = GameControlsManager.Instance.GetSupportedDevicesNotConnected()[0];
+            for (int i = 1; i<GameControlsManager.Instance.GetSupportedDevicesNotConnected().Count; i++)
             {
-                deviceNames += " or " + GameInput.Instance.GetSupportedDevicesNotConnected()[i];
+                deviceNames += " or " + GameControlsManager.Instance.GetSupportedDevicesNotConnected()[i];
             }
             connectControlText.text = "Connect a "+ deviceNames + " to enable "+ deviceNames +" controls."; 
         }

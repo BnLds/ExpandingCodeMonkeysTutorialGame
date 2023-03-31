@@ -25,7 +25,7 @@ public class PlayerManager : MonoBehaviour
 
     private void AddNewPlayerScreenUI_OnControlOptionSelection(object sender, AddNewPlayerScreenUI.EventArgsOnControlOptionSelection e)
     {
-        GameInput.Instance.SetNextPlayerControlScheme(e.controlSchemeSelected);
+        GameControlsManager.Instance.SetNextPlayerControlScheme(e.controlSchemeSelected);
         Instantiate(playerPrefab.gameObject, Vector3.zero, Quaternion.identity);
     }
 
