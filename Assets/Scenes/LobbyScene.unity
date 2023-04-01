@@ -638,7 +638,7 @@ GameObject:
   - component: {fileID: 356890063}
   - component: {fileID: 356890062}
   m_Layer: 5
-  m_Name: RightArrowButton
+  m_Name: RightArrowControlButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -656,12 +656,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 716177889}
+  m_Father: {fileID: 503746236}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 174, y: 0}
+  m_AnchoredPosition: {x: 131, y: -214}
   m_SizeDelta: {x: 67.5844, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &356890062
@@ -811,7 +811,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2, y: -10}
+  m_AnchoredPosition: {x: 2, y: 36}
   m_SizeDelta: {x: 399.4883, y: 399.4883}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &366866948
@@ -938,11 +938,15 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1908284003}
   - {fileID: 366866947}
-  - {fileID: 269461798}
   - {fileID: 1187391942}
   - {fileID: 1136114454}
-  - {fileID: 1908284003}
+  - {fileID: 356890061}
+  - {fileID: 1443559141}
+  - {fileID: 2029952033}
+  - {fileID: 1025468227}
+  - {fileID: 269461798}
   m_Father: {fileID: 941080956}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1016,11 +1020,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c64e08276a9f4794a84b4860a55b6b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightButton: {fileID: 1187391943}
-  leftButton: {fileID: 1136114457}
+  rightSkinButton: {fileID: 1187391943}
+  leftSkinButton: {fileID: 1136114457}
   readyButton: {fileID: 269461801}
   readyButtonText: {fileID: 1355352654}
   characterRawImage: {fileID: 366866948}
+  rightControlButton: {fileID: 356890064}
+  leftControlButton: {fileID: 1443559144}
+  controlOptionText: {fileID: 1025468228}
 --- !u!1 &554654243
 GameObject:
   m_ObjectHideFlags: 0
@@ -1235,10 +1242,6 @@ RectTransform:
   m_Children:
   - {fileID: 1340594298}
   - {fileID: 1719057833}
-  - {fileID: 356890061}
-  - {fileID: 1443559141}
-  - {fileID: 2029952033}
-  - {fileID: 1025468227}
   m_Father: {fileID: 941080956}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1313,9 +1316,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   addNewPlayerButton: {fileID: 1719057836}
-  rightArrow: {fileID: 356890064}
-  leftArrow: {fileID: 1443559144}
-  controlOptionText: {fileID: 1025468228}
 --- !u!1 &886053703
 GameObject:
   m_ObjectHideFlags: 0
@@ -1730,17 +1730,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1025468226}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 716177889}
+  m_Father: {fileID: 503746236}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 2}
+  m_AnchoredPosition: {x: 2, y: -212}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1025468228
@@ -1790,8 +1790,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30.03
-  m_fontSizeBase: 30.03
+  m_fontSize: 23.6
+  m_fontSizeBase: 23.6
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2055,7 +2055,7 @@ GameObject:
   - component: {fileID: 1136114456}
   - component: {fileID: 1136114455}
   m_Layer: 5
-  m_Name: LeftArrowButton
+  m_Name: LeftArrowSkinButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2078,8 +2078,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -165, y: 0}
-  m_SizeDelta: {x: 67.5844, y: 30}
+  m_AnchoredPosition: {x: -165, y: 27.000214}
+  m_SizeDelta: {x: 67.5844, y: 74.5299}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1136114455
 MonoBehaviour:
@@ -2335,7 +2335,7 @@ GameObject:
   - component: {fileID: 1187391946}
   - component: {fileID: 1187391947}
   m_Layer: 5
-  m_Name: RightArrowButton
+  m_Name: RightArrowSkinButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2358,8 +2358,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 165, y: 0}
-  m_SizeDelta: {x: 67.5844, y: 30}
+  m_AnchoredPosition: {x: 165, y: 27}
+  m_SizeDelta: {x: 67.5844, y: 74.5299}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1187391943
 MonoBehaviour:
@@ -2667,7 +2667,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1, y: 257}
+  m_AnchoredPosition: {x: -1, y: 81}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1340594299
@@ -3006,7 +3006,7 @@ GameObject:
   - component: {fileID: 1443559143}
   - component: {fileID: 1443559142}
   m_Layer: 5
-  m_Name: LeftArrowButton
+  m_Name: LeftArrowControlButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3024,12 +3024,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 716177889}
+  m_Father: {fileID: 503746236}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -165, y: 0}
+  m_AnchoredPosition: {x: -132, y: -214}
   m_SizeDelta: {x: 67.5844, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1443559142
@@ -3472,7 +3472,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -3, y: -155}
+  m_AnchoredPosition: {x: -3, y: -8}
   m_SizeDelta: {x: 250, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1719057834
@@ -4054,17 +4054,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2029952032}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 716177889}
+  m_Father: {fileID: 503746236}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 58}
+  m_AnchoredPosition: {x: 2, y: -176}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2029952034
@@ -4114,8 +4114,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 28.7
+  m_fontSizeBase: 28.7
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

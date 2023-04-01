@@ -101,8 +101,6 @@ public class LobbyUI : MonoBehaviour
         characterSelectionUI.GetComponent<CharacterSelectionSingleUI>().OnPlayerReady += characterSelectionTemplate_OnPlayerReady;
         characterSelectionUI.GetComponent<CharacterSelectionSingleUI>().OnPlayerNotReady += characterSelectionTemplate_OnPlayerNotReady;
 
-        //e.controlOptionSelected
-
         e.transform.GetComponent<NewPlayerSingleUI>().OnAddNewPlayer -= NewPlayerUI_OnAddNewPlayer;
         e.transform.gameObject.SetActive(false);
 

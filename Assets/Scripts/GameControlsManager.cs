@@ -40,8 +40,9 @@ public class GameControlsManager : MonoBehaviour
 
     private void Awake()
     {
-
         Instance = this;
+        DontDestroyOnLoad(this);
+
 
         numberOfPlayers = 0;
         supportedDevices = new List<string>();
@@ -49,15 +50,22 @@ public class GameControlsManager : MonoBehaviour
 
         defaultPlayerInputActions = new PlayerInputActions();
 
-        DontDestroyOnLoad(this);
-
+        CreateAllControlSchemesParameters();
     }
-
+    
     private void Start()
     {
         //PlayerInputActions defaultPlayerInputActions = GameInput.Instance.GetDefaultPlayerInputActions();
-        allControlSchemesParameters = new ControlSchemeParameters[defaultPlayerInputActions.controlSchemes.Count];
 
+        
+
+        //InputSystem.onDeviceChange += InputSystem_OnDeviceChange;
+
+    }
+
+    private void CreateAllControlSchemesParameters()
+    {
+        allControlSchemesParameters = new ControlSchemeParameters[defaultPlayerInputActions.controlSchemes.Count];
         for (int i = 0; i < defaultPlayerInputActions.controlSchemes.Count; i++)
         {
             allControlSchemesParameters[i].bindingGroupName = defaultPlayerInputActions.controlSchemes[i].bindingGroup;
@@ -76,9 +84,6 @@ public class GameControlsManager : MonoBehaviour
                 }
             }
         }
-
-        //InputSystem.onDeviceChange += InputSystem_OnDeviceChange;
-
     }
 
     /*private void InputSystem_OnDeviceChange(InputDevice device, InputDeviceChange change)

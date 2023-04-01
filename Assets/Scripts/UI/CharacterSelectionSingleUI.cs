@@ -13,17 +13,21 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     private const string NOTREADY_TEXT = "Ready?";
 
 
-    [SerializeField] private Button rightButton;
-    [SerializeField] private Button leftButton;
+    [SerializeField] private Button rightSkinButton;
+    [SerializeField] private Button leftSkinButton;
     [SerializeField] private Button readyButton;
     [SerializeField] private TextMeshProUGUI readyButtonText;
     [SerializeField] private RawImage characterRawImage;
+    [SerializeField] private Button rightControlButton;
+    [SerializeField] private Button leftControlButton;
+    [SerializeField] private TextMeshProUGUI controlOptionText;
 
     public event EventHandler<EventArgsOnPlayerReady> OnPlayerReady;
     public class EventArgsOnPlayerReady : EventArgs
     {
         public Transform origin;
         public int currentSkinDisplayedIndex;
+        public string controlOptionSelected;
     }
     public event EventHandler<EventArgsOnPlayerNotReady> OnPlayerNotReady;
     public class EventArgsOnPlayerNotReady : EventArgs
@@ -34,13 +38,19 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
     private int currentSkinDisplayedIndex;
     private bool isReady;
+    private int currentOptionIndexDisplayed;
 
     private void Awake()
     {
+        currentOptionIndexDisplayed = 0;
+
+        rightControlButton.onClick.AddListener(DisplayNextControlOption);
+        leftControlButton.onClick.AddListener(DisplayPreviousControlOption);
+
         isReady = false;
 
-        rightButton.onClick.AddListener(ShowNextSkin);
-        leftButton.onClick.AddListener(ShowPreviousSkin);
+        rightSkinButton.onClick.AddListener(ShowNextSkin);
+        leftSkinButton.onClick.AddListener(ShowPreviousSkin);
         readyButton.onClick.AddListener(TogglePlayerReady);
 
     }
@@ -56,6 +66,8 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
         //allSkinsAvailability and LobbyUI.Instance.GetSkinsSO() have matching indeces 
         characterRawImage.texture = LobbyUI.Instance.GetSkinsSO()[currentSkinDisplayedIndex].texture;
+
+        UpdateControlOptionText();
     }
 
     private void LobbyUI_OnSkinLocked(object sender, LobbyUI.EventArgsOnSkinLocked e)
@@ -76,7 +88,8 @@ public class CharacterSelectionSingleUI : MonoBehaviour
             OnPlayerReady?.Invoke(this, new EventArgsOnPlayerReady
             {
                 origin = this.transform,
-            currentSkinDisplayedIndex = currentSkinDisplayedIndex
+                currentSkinDisplayedIndex = currentSkinDisplayedIndex,
+                controlOptionSelected = GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices()[currentOptionIndexDisplayed]
             });
         }
         else
@@ -124,6 +137,34 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         }
         characterRawImage.texture = LobbyUI.Instance.GetSkinsSO()[currentSkinDisplayedIndex].texture;
     }
+
+    private void DisplayNextControlOption()
+    {
+        currentOptionIndexDisplayed = (currentOptionIndexDisplayed + 1) % GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices().Count;
+        UpdateControlOptionText();
+    }
+
+    private void DisplayPreviousControlOption()
+    {
+        if(currentOptionIndexDisplayed > 0)
+        {
+            currentOptionIndexDisplayed--;
+        }
+        else
+        {
+            currentOptionIndexDisplayed = GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices().Count;
+            currentOptionIndexDisplayed--;
+        }
+
+        UpdateControlOptionText();
+
+    }
+
+    private void UpdateControlOptionText()
+    {
+        controlOptionText.text = GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices()[currentOptionIndexDisplayed];
+    }
+
 
 
 }
