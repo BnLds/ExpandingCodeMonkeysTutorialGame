@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -37,6 +36,7 @@ public class GameControlsManager : MonoBehaviour
     private List<string> supportedDevicesNotConnected;
     private string nextPlayerControlSchemeName;
     private int numberOfPlayers;
+    private PlayerInputActions defaultPlayerInputActions;
 
     private void Awake()
     {
@@ -47,11 +47,15 @@ public class GameControlsManager : MonoBehaviour
         supportedDevices = new List<string>();
         connectedDevices = InputSystem.devices.ToList();
 
+        defaultPlayerInputActions = new PlayerInputActions();
+
+        DontDestroyOnLoad(this);
+
     }
 
     private void Start()
     {
-        PlayerInputActions defaultPlayerInputActions = GameInput.Instance.GetDefaultPlayerInputActions();
+        //PlayerInputActions defaultPlayerInputActions = GameInput.Instance.GetDefaultPlayerInputActions();
         allControlSchemesParameters = new ControlSchemeParameters[defaultPlayerInputActions.controlSchemes.Count];
 
         for (int i = 0; i < defaultPlayerInputActions.controlSchemes.Count; i++)
@@ -179,6 +183,11 @@ public class GameControlsManager : MonoBehaviour
     public bool IsNumberOfPlayersMaxReached()
     {
         return !(numberOfPlayers<numberOfPlayersMax);
+    }
+
+    public int GetMaxNumberOfPlayers()
+    {
+        return numberOfPlayersMax;
     }
 
 

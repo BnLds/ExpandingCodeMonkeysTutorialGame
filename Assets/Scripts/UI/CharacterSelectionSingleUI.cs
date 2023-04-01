@@ -19,8 +19,17 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI readyButtonText;
     [SerializeField] private RawImage characterRawImage;
 
-    public event EventHandler OnPlayerReady;
-    public event EventHandler OnPlayerNotReady;
+    public event EventHandler<EventArgsOnPlayerReady> OnPlayerReady;
+    public class EventArgsOnPlayerReady : EventArgs
+    {
+        public Transform origin;
+        public int currentSkinDisplayedIndex;
+    }
+    public event EventHandler<EventArgsOnPlayerNotReady> OnPlayerNotReady;
+    public class EventArgsOnPlayerNotReady : EventArgs
+    {
+        public int currentSkinDisplayedIndex;
+    }
 
 
     private int currentSkinDisplayedIndex;
@@ -38,6 +47,8 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
     private void Start()
     {
+        LobbyUI.Instance.OnSkinLocked += LobbyUI_OnSkinLocked;
+
         SkinAvailability[] allSkinsAvailability = LobbyUI.Instance.GetAllSkinsAvailability();
 
         SkinAvailability firstAvailableSkin = allSkinsAvailability.First(skin => skin.isAvailable == true);
@@ -47,6 +58,14 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         characterRawImage.texture = LobbyUI.Instance.GetSkinsSO()[currentSkinDisplayedIndex].texture;
     }
 
+    private void LobbyUI_OnSkinLocked(object sender, LobbyUI.EventArgsOnSkinLocked e)
+    {
+        if(currentSkinDisplayedIndex == e.skinLockedIndex && e.origin != this.transform)
+        {
+            ShowNextSkin();
+        }
+    }
+
     private void TogglePlayerReady()
     {
         isReady = !isReady;
@@ -54,13 +73,20 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         {
             readyButtonText.text = READY_TEXT;
             readyButtonText.color = Color.green;
-            OnPlayerReady?.Invoke(this, EventArgs.Empty);
+            OnPlayerReady?.Invoke(this, new EventArgsOnPlayerReady
+            {
+                origin = this.transform,
+            currentSkinDisplayedIndex = currentSkinDisplayedIndex
+            });
         }
         else
         {
             readyButtonText.text = NOTREADY_TEXT;
             readyButtonText.color = Color.yellow;
-            OnPlayerNotReady?.Invoke(this, EventArgs.Empty);
+            OnPlayerNotReady?.Invoke(this, new EventArgsOnPlayerNotReady
+            {
+                currentSkinDisplayedIndex = currentSkinDisplayedIndex
+            });
         }
     }
 
