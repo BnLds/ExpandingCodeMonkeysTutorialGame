@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour
@@ -24,8 +22,16 @@ public class SoundManager : MonoBehaviour
 
     private void Start()
     {
-        DeliveryManager.Instance.OnRecipeSuccessed += DeliveryManager_OnRecipeSuccessed;
-        DeliveryManager.Instance.OnRecipeFailed += DeliveryManager_OnRecipeFailed;
+        if(DeliveryManager.Instance != null)
+        {
+            DeliveryManager.Instance.OnRecipeSuccessed += DeliveryManager_OnRecipeSuccessed;
+            DeliveryManager.Instance.OnRecipeFailed += DeliveryManager_OnRecipeFailed;
+        }
+        else
+        {
+            Debug.Log("No DeliveryManager.Instance found. This is expected if the SoundManager is called from the Lobby Scene");
+        }
+
         CuttingCounter.OnAnyCut += CuttingCounter_OnAnyCut;
         BaseCounter.OnAnyObjectObjectPlacedHere += BaseCounter_OnAnyObjectObjectPlacedHere;
         TrashCounter.OnAnyObjectTrashed += TrashCounter_OnAnyObjectTrashed;
