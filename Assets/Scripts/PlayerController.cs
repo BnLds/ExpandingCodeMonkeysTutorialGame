@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
 
     private void Start() 
     {
-        playerInputActions = GameControlsManager.Instance.SetPlayerControlScheme();
+        //playerInputActions = GameControlsManager.Instance.SetPlayerControlScheme();
 
         GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
         GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;

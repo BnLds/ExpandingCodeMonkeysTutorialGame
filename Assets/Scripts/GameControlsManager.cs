@@ -34,7 +34,7 @@ public class GameControlsManager : MonoBehaviour
     private List<string> availableControlSchemesWithConnectedDevices;
     private List<string> supportedDevices;
     private List<string> supportedDevicesNotConnected;
-    private string nextPlayerControlSchemeName;
+    private List<string> selectedPlayerControls;
     private int numberOfPlayers;
     private PlayerInputActions defaultPlayerInputActions;
 
@@ -43,16 +43,37 @@ public class GameControlsManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(this);
 
+        LobbyUI.Instance.OnControlOptionSelected += LobbyUI_OnControlOptionSelected;
+        LobbyUI.Instance.OnControlOptionUnselected += LobbyUI_OnControlOptionUnselected;
+
 
         numberOfPlayers = 0;
         supportedDevices = new List<string>();
         connectedDevices = InputSystem.devices.ToList();
+        selectedPlayerControls = new List<string>();
 
         defaultPlayerInputActions = new PlayerInputActions();
 
         CreateAllControlSchemesParameters();
     }
-    
+
+    private void LobbyUI_OnControlOptionSelected(object sender, LobbyUI.EventArgsOnControlOptionSelected e)
+    {
+        selectedPlayerControls.Add(e.selectedControlName);
+
+        int indexSelectedControl = Array.FindIndex(allControlSchemesParameters, scheme => scheme.bindingGroupName == e.selectedControlName);
+        allControlSchemesParameters[indexSelectedControl].isAvailableForNewPlayer = false;
+    }
+
+    private void LobbyUI_OnControlOptionUnselected(object sender, LobbyUI.EventArgsOnControlOptionUnselected e)
+    {
+        selectedPlayerControls.Remove(e.unselectedControlName);
+
+        int indexSelectedControl = Array.FindIndex(allControlSchemesParameters, scheme => scheme.bindingGroupName == e.unselectedControlName);
+        allControlSchemesParameters[indexSelectedControl].isAvailableForNewPlayer = true;
+    }
+
+
     private void Start()
     {
         //PlayerInputActions defaultPlayerInputActions = GameInput.Instance.GetDefaultPlayerInputActions();
@@ -102,9 +123,9 @@ public class GameControlsManager : MonoBehaviour
         }
     }
     */
-    public PlayerInputActions SetPlayerControlScheme()
+    public PlayerInputActions SetPlayerControlScheme(string selectedControl)
     {
-        int indexControlsNextPlayer = Array.FindIndex(allControlSchemesParameters, scheme => scheme.bindingGroupName == nextPlayerControlSchemeName);
+        int indexControlsNextPlayer = Array.FindIndex(allControlSchemesParameters, scheme => scheme.bindingGroupName == selectedControl);
         allControlSchemesParameters[indexControlsNextPlayer].isAvailableForNewPlayer = false;
 
         string bindingGroupName = allControlSchemesParameters[indexControlsNextPlayer].bindingGroupName;
@@ -182,7 +203,7 @@ public class GameControlsManager : MonoBehaviour
 
     public void SetNextPlayerControlScheme(string controlScheme)
     {
-        nextPlayerControlSchemeName = controlScheme;
+        selectedPlayerControls.Add(controlScheme);
     }
 
     public bool IsNumberOfPlayersMaxReached()

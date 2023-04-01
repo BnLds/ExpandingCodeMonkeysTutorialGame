@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public struct SkinAvailability
 {
@@ -32,6 +31,20 @@ public class LobbyUI : MonoBehaviour
         public int skinLockedIndex;
         public Transform origin;
     }
+
+    public event EventHandler<EventArgsOnControlOptionSelected> OnControlOptionSelected;
+    public class EventArgsOnControlOptionSelected : EventArgs
+    {
+        public string selectedControlName;
+        public Transform origin;
+    }
+
+    public event EventHandler<EventArgsOnControlOptionUnselected> OnControlOptionUnselected;
+    public class EventArgsOnControlOptionUnselected
+    {
+        public string unselectedControlName;
+    }
+
 
     private SkinAvailability[] allSkinAvailability;
     private List<CharacterSelectionSingleUI> players;
@@ -103,7 +116,6 @@ public class LobbyUI : MonoBehaviour
 
         e.transform.GetComponent<NewPlayerSingleUI>().OnAddNewPlayer -= NewPlayerUI_OnAddNewPlayer;
         e.transform.gameObject.SetActive(false);
-
         
     }
 
@@ -145,7 +157,15 @@ public class LobbyUI : MonoBehaviour
         {
             skinLockedIndex = e.currentSkinDisplayedIndex,
             origin = e.origin
-    });
+        });
+
+        OnControlOptionSelected?.Invoke(this, new EventArgsOnControlOptionSelected
+        {
+            selectedControlName = e.controlOptionSelected,
+            origin = e.origin
+        });
+
+
         numberOfPlayersReady++;
 
     }
@@ -153,8 +173,13 @@ public class LobbyUI : MonoBehaviour
     private void characterSelectionTemplate_OnPlayerNotReady(object sender, CharacterSelectionSingleUI.EventArgsOnPlayerNotReady e)
     {
         allSkinAvailability[e.currentSkinDisplayedIndex].isAvailable = true;
-        numberOfPlayersReady--;
 
+        OnControlOptionUnselected?.Invoke(this, new EventArgsOnControlOptionUnselected
+        {
+            unselectedControlName = e.controlOptionSelected
+        });
+
+        numberOfPlayersReady--;
     }
 
     public float GetLobbyCountdown()
