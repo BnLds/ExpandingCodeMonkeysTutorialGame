@@ -122,9 +122,9 @@ public class LobbyUI : MonoBehaviour
             countdownNumber = 0f;
         }
 
-        if(countdownNumber >= 3f)
+        if(countdownNumber >= 2.5f)
         {
-            Debug.Log("Start!!");
+            Loader.Load(Loader.Scene.GameScene);
         }
     }
 
