@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -21,6 +22,13 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     [SerializeField] private Button nextControlButton;
     [SerializeField] private Button previousControlButton;
     [SerializeField] private TextMeshProUGUI controlOptionText;
+
+    public enum State
+    {
+        AbleToSelect,
+        UnableToSelect,
+        Ready
+    }
   
 
     public event EventHandler<EventArgsOnPlayerReady> OnPlayerReady;
@@ -33,16 +41,21 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     public event EventHandler<EventArgsOnPlayerNotReady> OnPlayerNotReady;
     public class EventArgsOnPlayerNotReady : EventArgs
     {
+        public Transform origin;
         public int currentSkinDisplayedIndex;
         public string controlOptionSelected;
     }
 
 
     private int currentSkinDisplayedIndex;
-    private bool isReady;
     private int currentOptionIndexDisplayed;
     private string currentControlOptionSelected;
-    private static bool isAbleToSetReady;
+    private State state;
+    private bool isStateUnableToSelectInitialized;
+    private bool isStateAbleToSelectInitialized;
+    private List<string> availableControls;
+
+
 
     private void Awake()
     {
@@ -51,21 +64,20 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         nextControlButton.onClick.AddListener(ShowNextControlOption);
         previousControlButton.onClick.AddListener(ShowPreviousControlOption);
 
-        isReady = false;
-        isAbleToSetReady = true;
+        isStateUnableToSelectInitialized = false;
+        isStateAbleToSelectInitialized = false;
 
         nextSkinButton.onClick.AddListener(ShowNextSkin);
         previousSkinButton.onClick.AddListener(ShowPreviousSkin);
         readyButton.onClick.AddListener(TogglePlayerReady);
-
-        ResetReadyButton();
 
     }
 
     private void Start()
     {
         LobbyUI.Instance.OnSkinLocked += LobbyUI_OnSkinLocked;
-        LobbyUI.Instance.OnControlOptionSelected += LobbyUI_OnControlOptionLocked;
+        LobbyUI.Instance.OnControlOptionLocked += LobbyUI_OnControlOptionLocked;
+        LobbyUI.Instance.OnControlOptionUnlocked += LobbyUI_OnControlOptionUnlocked;
 
         SkinAvailability[] allSkinsAvailability = LobbyUI.Instance.GetAllSkinsAvailability();
 
@@ -75,22 +87,127 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         //allSkinsAvailability and LobbyUI.Instance.GetSkinsSO() have matching indeces 
         characterRawImage.texture = LobbyUI.Instance.GetSkinsSO()[currentSkinDisplayedIndex].texture;
 
-        UpdateControlOptionUI();
+        availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
+
+        state = State.AbleToSelect;
     }
 
     private void Update()
     {
-        bool hasNoMoreControlsForRemainingPlayers = LobbyUI.Instance.GetNumberOfPlayersNotReady() != 0 && !IsAvailableControlNotNull();
-        isAbleToSetReady = !(hasNoMoreControlsForRemainingPlayers);
-        readyButton.interactable = isAbleToSetReady || isReady;
+        switch(state)
+        {
+            case(State.AbleToSelect):
+
+                if (availableControls.Count != 0)
+                {
+                    if(!isStateAbleToSelectInitialized) InitializeAbleToSelectState();
+                }
+                else
+                {
+                    isStateAbleToSelectInitialized = false;
+                    state = State.UnableToSelect;
+                }
+                break;
+            
+            case(State.UnableToSelect):
+
+                if(availableControls.Count == 0)
+                {
+                    if(!isStateUnableToSelectInitialized) InitializeUnableToSelectState(); 
+                }
+                else
+                {
+                    isStateUnableToSelectInitialized = false;
+                    state = State.AbleToSelect;
+                }
+                break;
+
+            case(State.Ready):
+                break;
+        }
     }
 
-    private void LobbyUI_OnControlOptionLocked(object sender, LobbyUI.EventArgsOnControlOptionSelected e)
+    private void TogglePlayerReady()
     {
+        if(state == State.AbleToSelect)
+        {
+            isStateAbleToSelectInitialized = false;
+
+            state = State.Ready;
+
+            readyButtonText.text = READY_TEXT;
+            readyButtonText.color = Color.green;
+            DisableArrowInteractions();
+
+            OnPlayerReady?.Invoke(this, new EventArgsOnPlayerReady
+            {
+                origin = this.transform,
+                currentSkinDisplayedIndex = currentSkinDisplayedIndex,
+                controlOptionSelected = currentControlOptionSelected
+            });
+        }
+        else if (state == State.Ready)
+        {
+            //Move from Ready state to Able to Select
+            state = State.AbleToSelect;
+            
+            OnPlayerNotReady?.Invoke(this, new EventArgsOnPlayerNotReady
+            {
+                origin = this.transform,
+                currentSkinDisplayedIndex = currentSkinDisplayedIndex,
+                controlOptionSelected = currentControlOptionSelected
+            });
+        }
+    }
+
+    private void InitializeAbleToSelectState()
+    {
+        UpdateControlOptionUI();
+        ResetReadyButton();
+        EnableArrowInteractions();
+        isStateAbleToSelectInitialized = true;
+    }
+
+    private void InitializeUnableToSelectState()
+    {
+        DisableArrowInteractions();
+        readyButton.interactable = false;
+        readyButtonText.text = "Unable to start";
+        readyButtonText.color = Color.red;
+        controlOptionText.text = "No more control options available!";
+        previousControlButton.gameObject.SetActive(false);
+        nextControlButton.gameObject.SetActive(false);
+        isStateUnableToSelectInitialized = true;
+    }
+
+    private void LobbyUI_OnControlOptionLocked(object sender, LobbyUI.EventArgsOnControlOptionLocked e)
+    {
+        availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
+
         if(e.origin != this.transform && currentControlOptionSelected == e.selectedControlName)
         {
-            ShowNextControlOption();
+            if(availableControls.Count != 0)
+            {
+                ShowNextControlOption();
+            }
         }
+        else
+        {
+            currentOptionIndexDisplayed = availableControls.IndexOf(currentControlOptionSelected);
+        }
+    }
+
+    private void LobbyUI_OnControlOptionUnlocked(object sender, LobbyUI.EventArgsOnControlOptionUnlocked e)
+    {
+        //Locked control option is now unlocked. availbleControls list needs to be updated
+        availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
+
+        if(state == State.UnableToSelect || e.origin == this.transform)
+        {
+            currentControlOptionSelected = e.unselectedControlName;
+        }
+        
+        currentOptionIndexDisplayed = availableControls.IndexOf(currentControlOptionSelected);
     }
 
     private void LobbyUI_OnSkinLocked(object sender, LobbyUI.EventArgsOnSkinLocked e)
@@ -101,40 +218,10 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         }
     }
 
-    private void TogglePlayerReady()
-    {
-
-        isReady = !isReady;
-        if(isReady)
-        {
-            readyButtonText.text = READY_TEXT;
-            readyButtonText.color = Color.green;
-
-            DisableArrowInteractions();
-
-            OnPlayerReady?.Invoke(this, new EventArgsOnPlayerReady
-            {
-                origin = this.transform,
-                currentSkinDisplayedIndex = currentSkinDisplayedIndex,
-                controlOptionSelected = currentControlOptionSelected
-            });
-        }
-        else
-        {
-            ResetReadyButton();
-            EnableArrowInteractions();
-
-            OnPlayerNotReady?.Invoke(this, new EventArgsOnPlayerNotReady
-            {
-                currentSkinDisplayedIndex = currentSkinDisplayedIndex,
-                controlOptionSelected = currentControlOptionSelected
-            });
-
-        }
-    }
 
     private void ResetReadyButton()
     {
+        readyButton.interactable = true;
         readyButtonText.text = NOTREADY_TEXT;
         readyButtonText.color = Color.yellow;
     }
@@ -149,6 +236,8 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
     private void EnableArrowInteractions()
     {
+        previousControlButton.gameObject.SetActive(true);
+        nextControlButton.gameObject.SetActive(true);
         previousControlButton.interactable = true;
         nextControlButton.interactable = true;
         previousSkinButton.interactable = true;
@@ -192,11 +281,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
     private void ShowNextControlOption()
     {
-        if (IsAvailableControlNotNull())
-        {
-            currentOptionIndexDisplayed = (currentOptionIndexDisplayed + 1) % GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices().Count;
-        }
-
+        currentOptionIndexDisplayed = (currentOptionIndexDisplayed + 1) % availableControls.Count;
         UpdateControlOptionUI();
     }
 
@@ -208,7 +293,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         }
         else
         {
-            currentOptionIndexDisplayed = GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices().Count;
+            currentOptionIndexDisplayed = availableControls.Count;
             currentOptionIndexDisplayed--;
         }
 
@@ -217,25 +302,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
     private void UpdateControlOptionUI()
     {
-        if(IsAvailableControlNotNull())
-        {
-            currentControlOptionSelected = GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices()[currentOptionIndexDisplayed];
-            controlOptionText.text = currentControlOptionSelected;
-            previousControlButton.gameObject.SetActive(true);
-            previousControlButton.gameObject.SetActive(true);
-        }
-        else
-        {
-            controlOptionText.text = "No more control options available!";
-            previousControlButton.gameObject.SetActive(false);
-            nextControlButton.gameObject.SetActive(false);
-        }
+        currentControlOptionSelected = availableControls[currentOptionIndexDisplayed];
+        controlOptionText.text = currentControlOptionSelected;
     }
-
-    private bool IsAvailableControlNotNull()
-    {
-        return GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices().Count != 0;
-    }
-    
-
 }

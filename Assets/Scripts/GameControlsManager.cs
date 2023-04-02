@@ -43,8 +43,8 @@ public class GameControlsManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(this);
 
-        LobbyUI.Instance.OnControlOptionSelected += LobbyUI_OnControlOptionSelected;
-        LobbyUI.Instance.OnControlOptionUnselected += LobbyUI_OnControlOptionUnselected;
+        LobbyUI.Instance.OnControlOptionLocked += LobbyUI_OnControlOptionSelected;
+        LobbyUI.Instance.OnControlOptionUnlocked += LobbyUI_OnControlOptionUnselected;
 
 
         numberOfPlayers = 0;
@@ -57,7 +57,7 @@ public class GameControlsManager : MonoBehaviour
         CreateAllControlSchemesParameters();
     }
 
-    private void LobbyUI_OnControlOptionSelected(object sender, LobbyUI.EventArgsOnControlOptionSelected e)
+    private void LobbyUI_OnControlOptionSelected(object sender, LobbyUI.EventArgsOnControlOptionLocked e)
     {
         selectedPlayerControls.Add(e.selectedControlName);
 
@@ -65,7 +65,7 @@ public class GameControlsManager : MonoBehaviour
         allControlSchemesParameters[indexSelectedControl].isAvailableForNewPlayer = false;
     }
 
-    private void LobbyUI_OnControlOptionUnselected(object sender, LobbyUI.EventArgsOnControlOptionUnselected e)
+    private void LobbyUI_OnControlOptionUnselected(object sender, LobbyUI.EventArgsOnControlOptionUnlocked e)
     {
         selectedPlayerControls.Remove(e.unselectedControlName);
 

@@ -33,17 +33,18 @@ public class LobbyUI : MonoBehaviour
         public Transform origin;
     }
 
-    public event EventHandler<EventArgsOnControlOptionSelected> OnControlOptionSelected;
-    public class EventArgsOnControlOptionSelected : EventArgs
+    public event EventHandler<EventArgsOnControlOptionLocked> OnControlOptionLocked;
+    public class EventArgsOnControlOptionLocked : EventArgs
     {
         public string selectedControlName;
         public Transform origin;
     }
 
-    public event EventHandler<EventArgsOnControlOptionUnselected> OnControlOptionUnselected;
-    public class EventArgsOnControlOptionUnselected
+    public event EventHandler<EventArgsOnControlOptionUnlocked> OnControlOptionUnlocked;
+    public class EventArgsOnControlOptionUnlocked
     {
         public string unselectedControlName;
+        public Transform origin;
     }
 
 
@@ -166,7 +167,7 @@ public class LobbyUI : MonoBehaviour
             origin = e.origin
         });
 
-        OnControlOptionSelected?.Invoke(this, new EventArgsOnControlOptionSelected
+        OnControlOptionLocked?.Invoke(this, new EventArgsOnControlOptionLocked
         {
             selectedControlName = e.controlOptionSelected,
             origin = e.origin
@@ -181,9 +182,10 @@ public class LobbyUI : MonoBehaviour
     {
         allSkinAvailability[e.currentSkinDisplayedIndex].isAvailable = true;
 
-        OnControlOptionUnselected?.Invoke(this, new EventArgsOnControlOptionUnselected
+        OnControlOptionUnlocked?.Invoke(this, new EventArgsOnControlOptionUnlocked
         {
-            unselectedControlName = e.controlOptionSelected
+            unselectedControlName = e.controlOptionSelected,
+            origin = e.origin
         });
 
         numberOfPlayersReady--;
