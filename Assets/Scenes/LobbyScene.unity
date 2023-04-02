@@ -430,7 +430,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &275901643
 RectTransform:
   m_ObjectHideFlags: 0
@@ -438,17 +438,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 275901642}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 503746236}
+  m_Father: {fileID: 391675983}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -123}
+  m_AnchoredPosition: {x: 24, y: -465}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &275901644
@@ -498,8 +498,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18.85
-  m_fontSizeBase: 18.85
+  m_fontSize: 28.92
+  m_fontSizeBase: 28.92
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -773,7 +773,7 @@ GameObject:
   - component: {fileID: 356890063}
   - component: {fileID: 356890062}
   m_Layer: 5
-  m_Name: RightArrowControlButton
+  m_Name: NextControlButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1015,6 +1015,7 @@ RectTransform:
   m_Children:
   - {fileID: 1488059764}
   - {fileID: 644612215}
+  - {fileID: 275901643}
   - {fileID: 941080956}
   m_Father: {fileID: 886053707}
   m_RootOrder: -1
@@ -1041,6 +1042,7 @@ MonoBehaviour:
   characterSelectionUITemplate: {fileID: 503746240}
   newPlayerUITemplate: {fileID: 716177893}
   container: {fileID: 941080956}
+  connectControlText: {fileID: 275901644}
 --- !u!1 &503746235
 GameObject:
   m_ObjectHideFlags: 0
@@ -1082,7 +1084,6 @@ RectTransform:
   - {fileID: 2029952033}
   - {fileID: 1025468227}
   - {fileID: 269461798}
-  - {fileID: 275901643}
   m_Father: {fileID: 941080956}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1156,15 +1157,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c64e08276a9f4794a84b4860a55b6b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightSkinButton: {fileID: 1187391943}
-  leftSkinButton: {fileID: 1136114457}
+  nextSkinButton: {fileID: 1187391943}
+  previousSkinButton: {fileID: 1136114457}
   readyButton: {fileID: 269461801}
   readyButtonText: {fileID: 1355352654}
   characterRawImage: {fileID: 366866948}
-  rightControlButton: {fileID: 356890064}
-  leftControlButton: {fileID: 1443559144}
+  nextControlButton: {fileID: 356890064}
+  previousControlButton: {fileID: 1443559144}
   controlOptionText: {fileID: 1025468228}
-  connectControlText: {fileID: 275901644}
 --- !u!1 &554654243
 GameObject:
   m_ObjectHideFlags: 0
@@ -2192,7 +2192,7 @@ GameObject:
   - component: {fileID: 1136114456}
   - component: {fileID: 1136114455}
   m_Layer: 5
-  m_Name: LeftArrowSkinButton
+  m_Name: PreviousSkinButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2472,7 +2472,7 @@ GameObject:
   - component: {fileID: 1187391946}
   - component: {fileID: 1187391947}
   m_Layer: 5
-  m_Name: RightArrowSkinButton
+  m_Name: NextSkinButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3143,7 +3143,7 @@ GameObject:
   - component: {fileID: 1443559143}
   - component: {fileID: 1443559142}
   m_Layer: 5
-  m_Name: LeftArrowControlButton
+  m_Name: PreviousControlButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

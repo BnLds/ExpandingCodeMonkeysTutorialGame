@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public struct SkinAvailability
 {
     public string skinName;
@@ -24,6 +24,7 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private CharacterSelectionSingleUI characterSelectionUITemplate;
     [SerializeField] private NewPlayerSingleUI newPlayerUITemplate;
     [SerializeField] private Transform container;
+    [SerializeField] private TextMeshProUGUI connectControlText;
 
     public event EventHandler<EventArgsOnSkinLocked> OnSkinLocked;
     public class EventArgsOnSkinLocked : EventArgs
@@ -78,6 +79,12 @@ public class LobbyUI : MonoBehaviour
         characterSelectionUITemplate.OnPlayerReady += characterSelectionTemplate_OnPlayerReady;
         characterSelectionUITemplate.OnPlayerNotReady += characterSelectionTemplate_OnPlayerNotReady;
 
+        DisplayConnectDevices();
+        InstantiateNewPlayerUI();
+    }
+
+    private void InstantiateNewPlayerUI()
+    {
         int numberOfNewPlayerUIToInstantiate = GameControlsManager.Instance.GetMaxNumberOfPlayers() - 1;
 
         if(numberOfNewPlayerUIToInstantiate > 1)
@@ -182,17 +189,41 @@ public class LobbyUI : MonoBehaviour
         numberOfPlayersReady--;
     }
 
+    private void DisplayConnectDevices()
+    {
+        //Notify player more controls are available
+        if (GameControlsManager.Instance.GetSupportedDevicesNotConnected() == null)
+        {
+            connectControlText.gameObject.SetActive(false);
+        }
+        else if (GameControlsManager.Instance.GetSupportedDevicesNotConnected().Count == 1)
+        {
+            connectControlText.gameObject.SetActive(true);
+            string deviceName = GameControlsManager.Instance.GetSupportedDevicesNotConnected()[0];
+            connectControlText.text = "Connect a " + deviceName + " to enable " + deviceName + " controls.";
+
+        }
+        else
+        {
+            connectControlText.gameObject.SetActive(true);
+            string deviceNames = GameControlsManager.Instance.GetSupportedDevicesNotConnected()[0];
+            for (int i = 1; i < GameControlsManager.Instance.GetSupportedDevicesNotConnected().Count; i++)
+            {
+                deviceNames += " or " + GameControlsManager.Instance.GetSupportedDevicesNotConnected()[i];
+            }
+            connectControlText.text = "Connect a " + deviceNames + " to enable " + deviceNames + " controls.";
+        }
+    }
+
     public float GetLobbyCountdown()
     {
         return countdownNumber;
     }
 
-
-
-
-
-
-
+    public int GetNumberOfPlayersNotReady()
+    {
+        return players.Count - numberOfPlayersReady;
+    }
 
 
 }
