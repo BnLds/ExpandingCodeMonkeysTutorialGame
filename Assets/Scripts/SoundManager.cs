@@ -35,7 +35,35 @@ public class SoundManager : MonoBehaviour
         CuttingCounter.OnAnyCut += CuttingCounter_OnAnyCut;
         BaseCounter.OnAnyObjectObjectPlacedHere += BaseCounter_OnAnyObjectObjectPlacedHere;
         TrashCounter.OnAnyObjectTrashed += TrashCounter_OnAnyObjectTrashed;
+        CharacterSelectionSingleUI.OnReadySelection += CharacterSelectionSingleUI_OnReadySelection;
+        CharacterSelectionSingleUI.OnReadyUnselection += CharacterSelectionSingleUI_OnReadyUnselection;
+        CharacterSelectionSingleUI.OnClick += CharacterSelectionSingleUI_OnClick;
+        NewPlayerSingleUI.OnPlayerAdditon += NewPlayerSingleUI_OnPlayerAdditon;
 
+    }
+
+    private void NewPlayerSingleUI_OnPlayerAdditon(object sender, EventArgs e)
+    {
+        Camera camera = Camera.main;
+        PlaySound(audioClipRefsSO.addNewPlayer, camera.transform.position, volume = .5f);
+    }
+
+    private void CharacterSelectionSingleUI_OnClick(object sender, EventArgs e)
+    {
+        Camera camera = Camera.main;
+        PlaySound(audioClipRefsSO.click, camera.transform.position, volume = .5f);
+    }
+
+    private void CharacterSelectionSingleUI_OnReadyUnselection(object sender, EventArgs e)
+    {
+        Camera camera = Camera.main;
+        PlaySound(audioClipRefsSO.cancel, camera.transform.position, volume = .5f);
+    }
+
+    private void CharacterSelectionSingleUI_OnReadySelection(object sender, EventArgs e)
+    {
+        Camera camera = Camera.main;
+        PlaySound(audioClipRefsSO.validation, camera.transform.position, volume = .5f);
     }
 
     private void TrashCounter_OnAnyObjectTrashed(object sender, EventArgs e)

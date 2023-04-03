@@ -9,6 +9,16 @@ using System.Linq;
 
 public class CharacterSelectionSingleUI : MonoBehaviour
 {
+    //the below events are responsible to let SoundManager know when to play a sound
+    public static event EventHandler OnReadySelection;
+    public static event EventHandler OnReadyUnselection;
+    public static event EventHandler OnClick;
+    public static void ResetStaticData()
+    {
+        OnReadySelection = null;
+        OnReadyUnselection = null;
+        OnClick = null;
+    }
 
     private const string READY_TEXT = "Ready!";
     private const string NOTREADY_TEXT = "Ready?";
@@ -45,6 +55,9 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         public int currentSkinDisplayedIndex;
         public string controlOptionSelected;
     }
+
+    
+
 
 
     private int currentSkinDisplayedIndex;
@@ -148,6 +161,8 @@ public class CharacterSelectionSingleUI : MonoBehaviour
                 currentSkinDisplayedIndex = currentSkinDisplayedIndex,
                 controlOptionSelected = currentControlOptionSelected
             });
+
+            OnReadySelection?.Invoke(this, EventArgs.Empty);
         }
         else if (state == State.Ready)
         {
@@ -160,6 +175,8 @@ public class CharacterSelectionSingleUI : MonoBehaviour
                 currentSkinDisplayedIndex = currentSkinDisplayedIndex,
                 controlOptionSelected = currentControlOptionSelected
             });
+
+            OnReadyUnselection?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -262,6 +279,8 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         }
 
         characterRawImage.texture = LobbyUI.Instance.GetSkinsSO()[currentSkinDisplayedIndex].texture;
+
+        OnClick?.Invoke(this, EventArgs.Empty);
     }
 
     private void ShowPreviousSkin()
@@ -280,12 +299,16 @@ public class CharacterSelectionSingleUI : MonoBehaviour
             }
         }
         characterRawImage.texture = LobbyUI.Instance.GetSkinsSO()[currentSkinDisplayedIndex].texture;
+
+        OnClick?.Invoke(this, EventArgs.Empty);
     }
 
     private void ShowNextControlOption()
     {
         currentOptionIndexDisplayed = (currentOptionIndexDisplayed + 1) % availableControls.Count;
         UpdateControlOptionUI();
+
+        OnClick?.Invoke(this, EventArgs.Empty);
     }
 
     private void ShowPreviousControlOption()
@@ -301,6 +324,8 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         }
 
         UpdateControlOptionUI();
+
+        OnClick?.Invoke(this, EventArgs.Empty);
     }
 
     private void UpdateControlOptionUI()

@@ -43,3 +43,11 @@ MonoBehaviour:
   warning:
   - {fileID: 8300000, guid: b90d8099bdbf09a40ab1163556d5b5f4, type: 3}
   - {fileID: 8300000, guid: b59c98e0066c41f42b8100f5cb180f5b, type: 3}
+  validation:
+  - {fileID: 8300000, guid: 4b22bfbdbacfa0445bc9bbfbb0141085, type: 3}
+  cancel:
+  - {fileID: 8300000, guid: 400611abd7434234993616a86c030d1e, type: 3}
+  click:
+  - {fileID: 8300000, guid: 331b82ab2c0e2b74d805124d11372c85, type: 3}
+  addNewPlayer:
+  - {fileID: 8300000, guid: 6728bf8b07482414e99ba965fdd022d8, type: 3}

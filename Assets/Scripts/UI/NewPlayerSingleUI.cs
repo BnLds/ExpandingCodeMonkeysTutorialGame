@@ -1,9 +1,16 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
+
 
 public class NewPlayerSingleUI : MonoBehaviour
 {
+    public static event EventHandler OnPlayerAdditon;
+    public static void ResetStaticData()
+    {
+        OnPlayerAdditon = null;
+    }
+
     [SerializeField] private Button addNewPlayerButton;
 
 
@@ -17,9 +24,16 @@ public class NewPlayerSingleUI : MonoBehaviour
 
     private void Awake()
     {
-        addNewPlayerButton.onClick.AddListener(() => OnAddNewPlayer?.Invoke(this, new EventArgsOnAddNewPlayer
+        addNewPlayerButton.onClick.AddListener(NotifyAddNewPlayer);
+    }
+
+    private void NotifyAddNewPlayer()
+    {
+        OnAddNewPlayer?.Invoke(this, new EventArgsOnAddNewPlayer
         {
             transform = this.transform
-        }));
+        });
+
+        OnPlayerAdditon?.Invoke(this, EventArgs.Empty);
     }
 }
