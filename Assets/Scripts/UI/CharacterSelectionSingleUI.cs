@@ -13,11 +13,13 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     public static event EventHandler OnReadySelection;
     public static event EventHandler OnReadyUnselection;
     public static event EventHandler OnClick;
+    public static event EventHandler OnPlayerRemoval;
     public static void ResetStaticData()
     {
         OnReadySelection = null;
         OnReadyUnselection = null;
         OnClick = null;
+        OnPlayerRemoval = null;
     }
 
     private const string READY_TEXT = "Ready!";
@@ -32,6 +34,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     [SerializeField] private Button nextControlButton;
     [SerializeField] private Button previousControlButton;
     [SerializeField] private TextMeshProUGUI controlOptionText;
+    [SerializeField] private Button removePlayerButton;
 
     public enum State
     {
@@ -56,9 +59,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         public string controlOptionSelected;
     }
 
-    
-
-
+    public event EventHandler OnRemovePlayer;
 
     private int currentSkinDisplayedIndex;
     private int currentOptionIndexDisplayed;
@@ -83,6 +84,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         nextSkinButton.onClick.AddListener(ShowNextSkin);
         previousSkinButton.onClick.AddListener(ShowPreviousSkin);
         readyButton.onClick.AddListener(TogglePlayerReady);
+        removePlayerButton.onClick.AddListener(ActPlayerRemoval);
 
     }
 
@@ -91,6 +93,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         LobbyUI.Instance.OnSkinLocked += LobbyUI_OnSkinLocked;
         LobbyUI.Instance.OnControlOptionLocked += LobbyUI_OnControlOptionLocked;
         LobbyUI.Instance.OnControlOptionUnlocked += LobbyUI_OnControlOptionUnlocked;
+        CharacterSelectionSingleUI.OnPlayerRemoval += CharacterSelectionSingleUI_OnPlayerRemoval;
 
         SkinAvailability[] allSkinsAvailability = LobbyUI.Instance.GetAllSkinsAvailability();
 
@@ -106,6 +109,14 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
         //Initialize Ready button to Selected on the EventSystem so it appears selected for gamepad.
         readyButton.Select();
+    }
+
+    private void OnDestroy()
+    {
+        LobbyUI.Instance.OnSkinLocked -= LobbyUI_OnSkinLocked;
+        LobbyUI.Instance.OnControlOptionLocked -= LobbyUI_OnControlOptionLocked;
+        LobbyUI.Instance.OnControlOptionUnlocked -= LobbyUI_OnControlOptionUnlocked;
+        CharacterSelectionSingleUI.OnPlayerRemoval -= CharacterSelectionSingleUI_OnPlayerRemoval;
     }
 
     private void Update()
@@ -142,6 +153,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
                 break;
         }
     }
+
 
     private void TogglePlayerReady()
     {
@@ -198,6 +210,14 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         previousControlButton.gameObject.SetActive(false);
         nextControlButton.gameObject.SetActive(false);
         isStateUnableToSelectInitialized = true;
+    }
+
+    private void CharacterSelectionSingleUI_OnPlayerRemoval(object sender, EventArgs e)
+    {
+        if(state == State.Ready)
+        {
+            TogglePlayerReady();
+        }
     }
 
     private void LobbyUI_OnControlOptionLocked(object sender, LobbyUI.EventArgsOnControlOptionLocked e)
@@ -332,5 +352,26 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     {
         currentControlOptionSelected = availableControls[currentOptionIndexDisplayed];
         controlOptionText.text = currentControlOptionSelected;
+    }
+
+    private void ActPlayerRemoval()
+    {
+        if(state == State.Ready)
+        {
+            OnPlayerNotReady?.Invoke(this, new EventArgsOnPlayerNotReady
+            {
+                origin = this.transform,
+                currentSkinDisplayedIndex = currentSkinDisplayedIndex,
+                controlOptionSelected = currentControlOptionSelected
+            });
+        }
+        
+        OnRemovePlayer?.Invoke(this, EventArgs.Empty);
+        OnPlayerRemoval?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void ShowRemovePlayerButton()
+    {
+        removePlayerButton.gameObject.SetActive(true);
     }
 }

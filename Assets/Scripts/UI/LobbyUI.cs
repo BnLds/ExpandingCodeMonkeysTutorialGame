@@ -47,7 +47,6 @@ public class LobbyUI : MonoBehaviour
         public Transform origin;
     }
 
-
     private SkinAvailability[] allSkinAvailability;
     private List<CharacterSelectionSingleUI> players;
     private List<NewPlayerSingleUI> newPlayerUIs;
@@ -81,10 +80,10 @@ public class LobbyUI : MonoBehaviour
         characterSelectionUITemplate.OnPlayerNotReady += characterSelectionTemplate_OnPlayerNotReady;
 
         DisplayConnectDevices();
-        InstantiateNewPlayerUI();
+        InstantiateNewPlayerUIOnLoad();
     }
 
-    private void InstantiateNewPlayerUI()
+    private void InstantiateNewPlayerUIOnLoad()
     {
         int numberOfNewPlayerUIToInstantiate = GameControlsManager.Instance.GetMaxNumberOfPlayers() - 1;
 
@@ -119,8 +118,11 @@ public class LobbyUI : MonoBehaviour
         int indexInLayerGroup = players.Count - 1;
         characterSelectionUI.SetSiblingIndex(indexInLayerGroup);
 
+        characterSelectionUI.GetComponent<CharacterSelectionSingleUI>().ShowRemovePlayerButton();
         characterSelectionUI.GetComponent<CharacterSelectionSingleUI>().OnPlayerReady += characterSelectionTemplate_OnPlayerReady;
         characterSelectionUI.GetComponent<CharacterSelectionSingleUI>().OnPlayerNotReady += characterSelectionTemplate_OnPlayerNotReady;
+        characterSelectionUI.GetComponent<CharacterSelectionSingleUI>().OnRemovePlayer += characterSelectionTemplate_OnRemovePlayer;
+
 
         e.transform.GetComponent<NewPlayerSingleUI>().OnAddNewPlayer -= NewPlayerUI_OnAddNewPlayer;
         e.transform.gameObject.SetActive(false);
@@ -189,6 +191,23 @@ public class LobbyUI : MonoBehaviour
         });
 
         numberOfPlayersReady--;
+    }
+
+    private void characterSelectionTemplate_OnRemovePlayer(object sender, EventArgs e)
+    {
+        CharacterSelectionSingleUI characterSelectionSingleUI = sender as CharacterSelectionSingleUI;
+        players.Remove(characterSelectionSingleUI.GetComponent<CharacterSelectionSingleUI>());
+        characterSelectionSingleUI.GetComponent<CharacterSelectionSingleUI>().OnPlayerReady -= characterSelectionTemplate_OnPlayerReady;
+        characterSelectionSingleUI.GetComponent<CharacterSelectionSingleUI>().OnPlayerNotReady -= characterSelectionTemplate_OnPlayerNotReady;
+        characterSelectionSingleUI.GetComponent<CharacterSelectionSingleUI>().OnRemovePlayer -= characterSelectionTemplate_OnRemovePlayer;
+
+        Destroy(characterSelectionSingleUI.gameObject);
+
+        Transform newPlayerUI = Instantiate(newPlayerUITemplate.transform, container);
+        newPlayerUI.SetAsLastSibling();
+        newPlayerUI.gameObject.SetActive(true);
+        newPlayerUIs.Add(newPlayerUI.GetComponent<NewPlayerSingleUI>());
+        newPlayerUI.GetComponent<NewPlayerSingleUI>().OnAddNewPlayer += NewPlayerUI_OnAddNewPlayer;
     }
 
     private void DisplayConnectDevices()

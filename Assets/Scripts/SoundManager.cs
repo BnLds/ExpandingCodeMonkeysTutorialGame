@@ -38,8 +38,15 @@ public class SoundManager : MonoBehaviour
         CharacterSelectionSingleUI.OnReadySelection += CharacterSelectionSingleUI_OnReadySelection;
         CharacterSelectionSingleUI.OnReadyUnselection += CharacterSelectionSingleUI_OnReadyUnselection;
         CharacterSelectionSingleUI.OnClick += CharacterSelectionSingleUI_OnClick;
+        CharacterSelectionSingleUI.OnPlayerRemoval += CharacterSelectionSingleUI_OnPlayerRemoval;
         NewPlayerSingleUI.OnPlayerAdditon += NewPlayerSingleUI_OnPlayerAdditon;
 
+    }
+
+    private void CharacterSelectionSingleUI_OnPlayerRemoval(object sender, EventArgs e)
+    {
+        Camera camera = Camera.main;
+        PlaySound(audioClipRefsSO.removePlayer, camera.transform.position, volume = .5f);
     }
 
     private void NewPlayerSingleUI_OnPlayerAdditon(object sender, EventArgs e)
