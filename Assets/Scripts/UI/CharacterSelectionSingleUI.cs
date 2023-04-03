@@ -90,6 +90,9 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
 
         state = State.AbleToSelect;
+
+        //Initialize Ready button to Selected on the EventSystem so it appears selected for gamepad.
+        readyButton.Select();
     }
 
     private void Update()

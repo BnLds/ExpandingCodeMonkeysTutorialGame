@@ -344,11 +344,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 1443559144}
     m_SelectOnDown: {fileID: 1136114457}
-    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnLeft: {fileID: 1719057836}
     m_SelectOnRight: {fileID: 1719057836}
   m_Transition: 1
   m_Colors:
@@ -2261,7 +2261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 269461801}
     m_SelectOnDown: {fileID: 1443559144}
@@ -3212,7 +3212,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 1136114457}
     m_SelectOnDown: {fileID: 269461801}
@@ -3478,7 +3478,7 @@ MonoBehaviour:
     type: 3}
   m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018,
     type: 3}
-  m_DeselectOnBackgroundClick: 1
+  m_DeselectOnBackgroundClick: 0
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
 --- !u!1001 &1657739048
