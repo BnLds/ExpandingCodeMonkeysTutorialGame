@@ -1,10 +1,8 @@
 using UnityEngine;
-using UnityEngine.UI;
-using System;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerLoader : MonoBehaviour
 {
-    public static PlayerManager Instance { get; private set; }
+    public static PlayerLoader Instance { get; private set; }
 
     [SerializeField] private Transform playerPrefab;
 
@@ -26,7 +24,7 @@ public class PlayerManager : MonoBehaviour
         {
             if(allControlSchemesParameters[i].playerInputActions != null)
             {
-                InstantiatePlayerExtensionMethod.InstantiatePlayer(playerPrefab.gameObject, Vector3.zero, Quaternion.identity, allControlSchemesParameters[i].playerInputActions);
+                InstantiatePlayerExtensionMethod.InstantiatePlayer(playerPrefab.gameObject, Vector3.zero, Quaternion.identity, allControlSchemesParameters[i].playerInputActions, allControlSchemesParameters[i].playerVisualMaterial);
             }
         }
     }

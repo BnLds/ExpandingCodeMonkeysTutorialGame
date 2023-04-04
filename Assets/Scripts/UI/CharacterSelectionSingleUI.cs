@@ -91,8 +91,8 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     private void Start()
     {
         LobbyUI.Instance.OnSkinLocked += LobbyUI_OnSkinLocked;
-        LobbyUI.Instance.OnControlOptionLocked += LobbyUI_OnControlOptionLocked;
-        LobbyUI.Instance.OnControlOptionUnlocked += LobbyUI_OnControlOptionUnlocked;
+        LobbyUI.Instance.OnControlOptionSelected += LobbyUI_OnControlOptionLocked;
+        LobbyUI.Instance.OnControlOptionUnselected += LobbyUI_OnControlOptionUnlocked;
         CharacterSelectionSingleUI.OnPlayerRemoval += CharacterSelectionSingleUI_OnPlayerRemoval;
 
         SkinAvailability[] allSkinsAvailability = LobbyUI.Instance.GetAllSkinsAvailability();
@@ -114,8 +114,8 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     private void OnDestroy()
     {
         LobbyUI.Instance.OnSkinLocked -= LobbyUI_OnSkinLocked;
-        LobbyUI.Instance.OnControlOptionLocked -= LobbyUI_OnControlOptionLocked;
-        LobbyUI.Instance.OnControlOptionUnlocked -= LobbyUI_OnControlOptionUnlocked;
+        LobbyUI.Instance.OnControlOptionSelected -= LobbyUI_OnControlOptionLocked;
+        LobbyUI.Instance.OnControlOptionUnselected -= LobbyUI_OnControlOptionUnlocked;
         CharacterSelectionSingleUI.OnPlayerRemoval -= CharacterSelectionSingleUI_OnPlayerRemoval;
     }
 

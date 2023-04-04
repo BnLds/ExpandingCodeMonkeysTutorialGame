@@ -33,18 +33,31 @@ public class LobbyUI : MonoBehaviour
         public Transform origin;
     }
 
-    public event EventHandler<EventArgsOnControlOptionLocked> OnControlOptionLocked;
+    public event EventHandler<EventArgsOnControlOptionLocked> OnControlOptionSelected;
     public class EventArgsOnControlOptionLocked : EventArgs
     {
         public string selectedControlName;
         public Transform origin;
     }
 
-    public event EventHandler<EventArgsOnControlOptionUnlocked> OnControlOptionUnlocked;
+    public event EventHandler<EventArgsOnControlOptionUnlocked> OnControlOptionUnselected;
     public class EventArgsOnControlOptionUnlocked
     {
         public string unselectedControlName;
         public Transform origin;
+    }
+
+    public event EventHandler<EventArgsOnCharacterParametersSelected> OnCharacterParametersSelected;
+    public class EventArgsOnCharacterParametersSelected : EventArgs
+    {
+        public string selectedControlName;
+        public Material selectedSkinMaterial;
+    }
+
+    public event EventHandler<EventArgsOnCharacterParametersUnselected> OnCharacterParametersUnselected;
+    public class EventArgsOnCharacterParametersUnselected : EventArgs
+    {
+        public string unselectedControlName;
     }
 
     private SkinAvailability[] allSkinAvailability;
@@ -161,7 +174,7 @@ public class LobbyUI : MonoBehaviour
 
     private void characterSelectionTemplate_OnPlayerReady(object sender, CharacterSelectionSingleUI.EventArgsOnPlayerReady e)
     {
-        allSkinAvailability[e.currentSkinDisplayedIndex].isAvailable = false;
+        allSkinAvailability[e.currentSkinDisplayedIndex].isAvailable = false;      
 
         OnSkinLocked?.Invoke(this, new EventArgsOnSkinLocked
         {
@@ -169,10 +182,16 @@ public class LobbyUI : MonoBehaviour
             origin = e.origin
         });
 
-        OnControlOptionLocked?.Invoke(this, new EventArgsOnControlOptionLocked
+        OnControlOptionSelected?.Invoke(this, new EventArgsOnControlOptionLocked
         {
             selectedControlName = e.controlOptionSelected,
             origin = e.origin
+        });
+
+        OnCharacterParametersSelected?.Invoke(this, new EventArgsOnCharacterParametersSelected
+        {
+            selectedControlName = e.controlOptionSelected,
+            selectedSkinMaterial = skins.characterSkinSOList[e.currentSkinDisplayedIndex].Material
         });
 
 
@@ -184,10 +203,15 @@ public class LobbyUI : MonoBehaviour
     {
         allSkinAvailability[e.currentSkinDisplayedIndex].isAvailable = true;
 
-        OnControlOptionUnlocked?.Invoke(this, new EventArgsOnControlOptionUnlocked
+        OnControlOptionUnselected?.Invoke(this, new EventArgsOnControlOptionUnlocked
         {
             unselectedControlName = e.controlOptionSelected,
             origin = e.origin
+        });
+
+        OnCharacterParametersUnselected?.Invoke(this, new EventArgsOnCharacterParametersUnselected
+        {
+            unselectedControlName = e.controlOptionSelected,
         });
 
         numberOfPlayersReady--;

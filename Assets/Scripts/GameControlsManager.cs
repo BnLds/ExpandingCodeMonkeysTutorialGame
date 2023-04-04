@@ -12,15 +12,18 @@ public struct ControlSchemeParameters
         public bool isAvailableForNewPlayer;
         public int playerID;
         public PlayerInputActions playerInputActions;
+        public Material playerVisualMaterial;
 
-        public ControlSchemeParameters(string bindingGroupName, List<string> requiredDevices, bool isAvailableForNewPlayer, int playerID, PlayerInputActions playerInputActions)
+
+    public ControlSchemeParameters(string bindingGroupName, List<string> requiredDevices, bool isAvailableForNewPlayer, int playerID, PlayerInputActions playerInputActions, Material playerVisualMaterial)
         {
             this.bindingGroupName = bindingGroupName;
             this.requiredDevices = requiredDevices;
             this.isAvailableForNewPlayer = isAvailableForNewPlayer;
             this.playerID = playerID;
             this.playerInputActions = playerInputActions;
-        }
+            this.playerVisualMaterial = playerVisualMaterial;
+    }
     }
 
 public class GameControlsManager : MonoBehaviour
@@ -48,8 +51,9 @@ public class GameControlsManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        LobbyUI.Instance.OnControlOptionLocked += LobbyUI_OnControlOptionSelected;
-        LobbyUI.Instance.OnControlOptionUnlocked += LobbyUI_OnControlOptionUnselected;
+        LobbyUI.Instance.OnCharacterParametersSelected += LobbyUI_OnCharacterParametersSelected;
+        LobbyUI.Instance.OnCharacterParametersUnselected += LobbyUI_OnCharacterParametersUnselected;
+
 
 
         numberOfPlayers = 0;
@@ -61,13 +65,14 @@ public class GameControlsManager : MonoBehaviour
         CreateAllControlSchemesParameters();
     }
 
-    private void LobbyUI_OnControlOptionSelected(object sender, LobbyUI.EventArgsOnControlOptionLocked e)
+    private void LobbyUI_OnCharacterParametersSelected(object sender, LobbyUI.EventArgsOnCharacterParametersSelected e)
     {
         int indexSelectedControl = Array.FindIndex(allControlSchemesParameters, scheme => scheme.bindingGroupName == e.selectedControlName);
         allControlSchemesParameters[indexSelectedControl].isAvailableForNewPlayer = false;
+        allControlSchemesParameters[indexSelectedControl].playerVisualMaterial = e.selectedSkinMaterial;
     }
 
-    private void LobbyUI_OnControlOptionUnselected(object sender, LobbyUI.EventArgsOnControlOptionUnlocked e)
+    private void LobbyUI_OnCharacterParametersUnselected(object sender, LobbyUI.EventArgsOnCharacterParametersUnselected e)
     {
         int indexSelectedControl = Array.FindIndex(allControlSchemesParameters, scheme => scheme.bindingGroupName == e.unselectedControlName);
         allControlSchemesParameters[indexSelectedControl].isAvailableForNewPlayer = true;
