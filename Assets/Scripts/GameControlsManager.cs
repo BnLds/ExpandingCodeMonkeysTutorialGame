@@ -129,18 +129,29 @@ public class GameControlsManager : MonoBehaviour
         allControlSchemesParameters[indexControlsNextPlayer].isAvailableForNewPlayer = false;
 
         string bindingGroupName = allControlSchemesParameters[indexControlsNextPlayer].bindingGroupName;
-        List<string> devices = allControlSchemesParameters[indexControlsNextPlayer].requiredDevices;
+        List<string> requiredDevices = allControlSchemesParameters[indexControlsNextPlayer].requiredDevices;
 
         PlayerInputActions newPlayerInputActions = new PlayerInputActions();
         InputUser newInputUser = new InputUser();
 
         foreach(string supportedDevice in supportedDevices)
         {
-            if(devices.Contains(supportedDevice))
+            if(requiredDevices.Contains(supportedDevice))
             {
-                InputDevice connectedDevice = connectedDevices.First(device => device.name == supportedDevice);
+                InputDevice connectedDevice;
+                // Unity uses different names for Gamepads in ControlSchemes.DeviceRequirements and InputSystem.devices.
+                // The ugly solution I found was to split the Gamepad case appart.
+                if(supportedDevice != "Gamepad")
+                {
+                    connectedDevice = connectedDevices.First(device => device.name == supportedDevice);
+                }
+                else
+                {
+                    connectedDevice = connectedDevices.First(device => device is Gamepad);
+                }
                 newInputUser = InputUser.PerformPairingWithDevice(connectedDevice);
             }
+
         }
 
         if(newInputUser.pairedDevices.Count == 0)
@@ -168,7 +179,13 @@ public class GameControlsManager : MonoBehaviour
         {
            foreach(ControlSchemeParameters schemeParameters in allControlSchemesParameters)
             {
-                if(schemeParameters.requiredDevices.Contains(connectedDevice.name) && schemeParameters.isAvailableForNewPlayer)
+                if(schemeParameters.requiredDevices.Contains(connectedDevice.name)&& schemeParameters.isAvailableForNewPlayer)
+                {
+                    availableControlSchemesWithConnectedDevices.Add(schemeParameters.bindingGroupName);
+                }
+
+                // Again I made a special case of Gamepad, ugly solution but easy one
+                if(connectedDevice is Gamepad && schemeParameters.requiredDevices.Contains("Gamepad") && schemeParameters.isAvailableForNewPlayer)
                 {
                     availableControlSchemesWithConnectedDevices.Add(schemeParameters.bindingGroupName);
                 }
@@ -191,6 +208,13 @@ public class GameControlsManager : MonoBehaviour
             {
                 supportedDevicesNotConnected.Remove(device.name);
             }
+
+            // Again I made a special case of Gamepad, ugly solution but easy one
+            if(device is Gamepad && supportedDevicesNotConnected.Contains("Gamepad"))
+            {
+                supportedDevicesNotConnected.Remove("Gamepad");
+            }
+
         }
 
         return supportedDevicesNotConnected;
@@ -215,6 +239,4 @@ public class GameControlsManager : MonoBehaviour
     {
         return numberOfPlayersMax;
     }
-
-
 }

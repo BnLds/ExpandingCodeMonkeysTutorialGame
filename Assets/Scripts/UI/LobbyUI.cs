@@ -213,7 +213,7 @@ public class LobbyUI : MonoBehaviour
     private void DisplayConnectDevices()
     {
         //Notify player more controls are available
-        if (GameControlsManager.Instance.GetSupportedDevicesNotConnected() == null)
+        if (GameControlsManager.Instance.GetSupportedDevicesNotConnected().Count == 0)
         {
             connectControlText.gameObject.SetActive(false);
         }
