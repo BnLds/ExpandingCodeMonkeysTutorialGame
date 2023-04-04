@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IKitchenObjectParent
@@ -28,8 +26,6 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
 
     private void Start() 
     {
-        //playerInputActions = GameControlsManager.Instance.SetPlayerControlScheme();
-
         GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
         GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
     }
@@ -197,6 +193,11 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
     public bool HasKitchenObject()
     {
         return kitchenObject != null;
+    }
+
+    public void SetPlayerInputActions(PlayerInputActions playerInputActions)
+    {
+        this.playerInputActions = playerInputActions;
     }
 
 

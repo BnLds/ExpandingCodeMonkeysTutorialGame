@@ -7,26 +7,27 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance { get; private set; }
 
     [SerializeField] private Transform playerPrefab;
-    [SerializeField] private Button addNewPlayerButton;
-
 
     private void Awake()
     {
         Instance = this;
-
-        addNewPlayerButton.onClick.AddListener(AddNewPlayerScreenUI.Instance.ShowAndUpdateVisual);
     }
 
     private void Start()
     {
-        AddNewPlayerScreenUI.Instance.OnControlOptionSelection += AddNewPlayerScreenUI_OnControlOptionSelection;
-
+        InstantiatePlayers();
     }
 
-    private void AddNewPlayerScreenUI_OnControlOptionSelection(object sender, AddNewPlayerScreenUI.EventArgsOnControlOptionSelection e)
+    private void InstantiatePlayers()
     {
-        GameControlsManager.Instance.SetNextPlayerControlScheme(e.controlSchemeSelected);
-        Instantiate(playerPrefab.gameObject, Vector3.zero, Quaternion.identity);
+        GameControlsManager.Instance.GeneratePlayerInputActions();
+        ControlSchemeParameters[] allControlSchemesParameters = GameControlsManager.Instance.GetAllControlSchemeParameters();
+        for (int i = 0; i < allControlSchemesParameters.Length; i++)
+        {
+            if(allControlSchemesParameters[i].playerInputActions != null)
+            {
+                InstantiatePlayerExtensionMethod.InstantiatePlayer(playerPrefab.gameObject, Vector3.zero, Quaternion.identity, allControlSchemesParameters[i].playerInputActions);
+            }
+        }
     }
-
 }
