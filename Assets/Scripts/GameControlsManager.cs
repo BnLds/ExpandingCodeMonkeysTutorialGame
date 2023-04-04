@@ -7,20 +7,16 @@ using System.Linq;
 
 public struct ControlSchemeParameters
     {
-        public string bindingGroupName;
-        public List<string> requiredDevices;
+        public InputControlScheme controlScheme;
         public bool isAvailableForNewPlayer;
-        public int playerID;
         public PlayerInputActions playerInputActions;
         public Material playerVisualMaterial;
 
 
-    public ControlSchemeParameters(string bindingGroupName, List<string> requiredDevices, bool isAvailableForNewPlayer, int playerID, PlayerInputActions playerInputActions, Material playerVisualMaterial)
+    public ControlSchemeParameters(InputControlScheme controlScheme, bool isAvailableForNewPlayer, PlayerInputActions playerInputActions, Material playerVisualMaterial)
         {
-            this.bindingGroupName = bindingGroupName;
-            this.requiredDevices = requiredDevices;
+            this.controlScheme = controlScheme;
             this.isAvailableForNewPlayer = isAvailableForNewPlayer;
-            this.playerID = playerID;
             this.playerInputActions = playerInputActions;
             this.playerVisualMaterial = playerVisualMaterial;
     }
@@ -35,7 +31,6 @@ public class GameControlsManager : MonoBehaviour
     private static ControlSchemeParameters[] allControlSchemesParameters;
     private List<InputDevice> connectedDevices;
     private List<string> availableControlSchemesWithConnectedDevices;
-    private List<string> supportedDevices;
     private List<string> supportedDevicesNotConnected;
     private int numberOfPlayers;
     private PlayerInputActions defaultPlayerInputActions;
@@ -54,10 +49,7 @@ public class GameControlsManager : MonoBehaviour
         LobbyUI.Instance.OnCharacterParametersSelected += LobbyUI_OnCharacterParametersSelected;
         LobbyUI.Instance.OnCharacterParametersUnselected += LobbyUI_OnCharacterParametersUnselected;
 
-
-
         numberOfPlayers = 0;
-        supportedDevices = new List<string>();
         connectedDevices = InputSystem.devices.ToList();
 
         defaultPlayerInputActions = new PlayerInputActions();
@@ -67,14 +59,14 @@ public class GameControlsManager : MonoBehaviour
 
     private void LobbyUI_OnCharacterParametersSelected(object sender, LobbyUI.EventArgsOnCharacterParametersSelected e)
     {
-        int indexSelectedControl = Array.FindIndex(allControlSchemesParameters, scheme => scheme.bindingGroupName == e.selectedControlName);
+        int indexSelectedControl = Array.FindIndex(allControlSchemesParameters, scheme => scheme.controlScheme.bindingGroup == e.selectedControlName);
         allControlSchemesParameters[indexSelectedControl].isAvailableForNewPlayer = false;
         allControlSchemesParameters[indexSelectedControl].playerVisualMaterial = e.selectedSkinMaterial;
     }
 
     private void LobbyUI_OnCharacterParametersUnselected(object sender, LobbyUI.EventArgsOnCharacterParametersUnselected e)
     {
-        int indexSelectedControl = Array.FindIndex(allControlSchemesParameters, scheme => scheme.bindingGroupName == e.unselectedControlName);
+        int indexSelectedControl = Array.FindIndex(allControlSchemesParameters, scheme => scheme.controlScheme.bindingGroup == e.unselectedControlName);
         allControlSchemesParameters[indexSelectedControl].isAvailableForNewPlayer = true;
     }
 
@@ -94,22 +86,9 @@ public class GameControlsManager : MonoBehaviour
         allControlSchemesParameters = new ControlSchemeParameters[defaultPlayerInputActions.controlSchemes.Count];
         for (int i = 0; i < defaultPlayerInputActions.controlSchemes.Count; i++)
         {
-            allControlSchemesParameters[i].bindingGroupName = defaultPlayerInputActions.controlSchemes[i].bindingGroup;
+            allControlSchemesParameters[i].controlScheme = defaultPlayerInputActions.controlSchemes[i];
             allControlSchemesParameters[i].isAvailableForNewPlayer = true;
-            allControlSchemesParameters[i].requiredDevices = new List<string>();
             allControlSchemesParameters[i].playerInputActions = null;
-
-            for (int j = 0; j < defaultPlayerInputActions.controlSchemes[i].deviceRequirements.Count; j++)
-            {
-                allControlSchemesParameters[i].requiredDevices.Add(GetDeviceNameFromDeviceRequirement(defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j]));
-
-                //Store supported devices in the list supportedDevices
-                string deviceName = GetDeviceNameFromDeviceRequirement(defaultPlayerInputActions.controlSchemes[i].deviceRequirements[j]);
-                if(!supportedDevices.Contains(deviceName))
-                {
-                    supportedDevices.Add(deviceName);
-                }
-            }
         }
     }
 
@@ -129,36 +108,21 @@ public class GameControlsManager : MonoBehaviour
         }
     }
     */
-    public void GeneratePlayerInputActions(/*string selectedControl*/)
+    public void GeneratePlayerInputActions()
     {
         for (int i = 0; i < allControlSchemesParameters.Length; i++)
         {
             if (allControlSchemesParameters[i].isAvailableForNewPlayer == false)
             {
-                string bindingGroupName = allControlSchemesParameters[i].bindingGroupName;
-                List<string> requiredDevices = allControlSchemesParameters[i].requiredDevices;
-
                 PlayerInputActions newPlayerInputActions = new PlayerInputActions();
                 InputUser newInputUser = new InputUser();
-
-                foreach (string supportedDevice in supportedDevices)
+                
+                foreach(InputDevice connectedDevice in connectedDevices)
                 {
-                    if (requiredDevices.Contains(supportedDevice))
+                    if(allControlSchemesParameters[i].controlScheme.SupportsDevice(connectedDevice))
                     {
-                        InputDevice connectedDevice;
-                        // Unity uses different names for Gamepads in ControlSchemes.DeviceRequirements and InputSystem.devices.
-                        // The ugly solution I found was to split the Gamepad case appart.
-                        if (supportedDevice != "Gamepad")
-                        {
-                            connectedDevice = connectedDevices.First(device => device.name == supportedDevice);
-                        }
-                        else
-                        {
-                            connectedDevice = connectedDevices.First(device => device is Gamepad);
-                        }
                         newInputUser = InputUser.PerformPairingWithDevice(connectedDevice);
                     }
-
                 }
 
                 if (newInputUser.pairedDevices.Count == 0)
@@ -167,12 +131,11 @@ public class GameControlsManager : MonoBehaviour
                 }
 
                 newInputUser.AssociateActionsWithUser(newPlayerInputActions);
-                newInputUser.ActivateControlScheme(bindingGroupName);
+                newInputUser.ActivateControlScheme(allControlSchemesParameters[i].controlScheme.bindingGroup);
                 newPlayerInputActions.Enable();
 
                 numberOfPlayers++;
 
-                allControlSchemesParameters[i].playerID = numberOfPlayers;
                 allControlSchemesParameters[i].playerInputActions = newPlayerInputActions;
 
                 GameInput.Instance.InitializePlayerInputActions(newPlayerInputActions);
@@ -185,17 +148,11 @@ public class GameControlsManager : MonoBehaviour
         availableControlSchemesWithConnectedDevices = new List<string>();
         foreach(InputDevice connectedDevice in connectedDevices)
         {
-           foreach(ControlSchemeParameters schemeParameters in allControlSchemesParameters)
+            for(int i = 0; i < allControlSchemesParameters.Length; i++)
             {
-                if(schemeParameters.requiredDevices.Contains(connectedDevice.name) && schemeParameters.isAvailableForNewPlayer)
+                if(allControlSchemesParameters[i].controlScheme.SupportsDevice(connectedDevice))
                 {
-                    availableControlSchemesWithConnectedDevices.Add(schemeParameters.bindingGroupName);
-                }
-
-                // Again I made a special case of Gamepad, ugly solution but easy one
-                if(connectedDevice is Gamepad && schemeParameters.requiredDevices.Contains("Gamepad") && schemeParameters.isAvailableForNewPlayer)
-                {
-                    availableControlSchemesWithConnectedDevices.Add(schemeParameters.bindingGroupName);
+                    availableControlSchemesWithConnectedDevices.Add(allControlSchemesParameters[i].controlScheme.bindingGroup);
                 }
             }
         }
@@ -209,16 +166,31 @@ public class GameControlsManager : MonoBehaviour
 
     public List<string> GetSupportedDevicesNotConnected()
     {
-        supportedDevicesNotConnected = new List<string>(supportedDevices);
-        foreach(InputDevice device in connectedDevices)
+        supportedDevicesNotConnected = new List<string>();
+        //Add all supported devices to supportedDevicesNotConnected 
+        foreach (ControlSchemeParameters schemeParameters in allControlSchemesParameters)
         {
-            if(supportedDevicesNotConnected.Contains(device.name))
+            for (int j = 0; j < schemeParameters.controlScheme.deviceRequirements.Count; j++)
             {
-                supportedDevicesNotConnected.Remove(device.name);
+                string deviceName = GetDeviceNameFromDeviceRequirement(schemeParameters.controlScheme.deviceRequirements[j]);
+                if (!supportedDevicesNotConnected.Contains(deviceName))
+                {
+                    supportedDevicesNotConnected.Add(deviceName);
+                }
+            }
+        }
+
+        //Remove the connected devices which belong to supportedDevicesNotConnected
+        foreach(InputDevice connectedDevice in connectedDevices)
+        {
+            if(supportedDevicesNotConnected.Contains(connectedDevice.name))
+            {
+                supportedDevicesNotConnected.Remove(connectedDevice.name);
             }
 
-            // Again I made a special case of Gamepad, ugly solution but easy one
-            if(device is Gamepad && supportedDevicesNotConnected.Contains("Gamepad"))
+            // Unity uses different names for Gamepads in ControlSchemes.DeviceRequirements and InputSystem.devices.
+            // The ugly solution I found was to split the Gamepad case appart.
+            if(connectedDevice is Gamepad && supportedDevicesNotConnected.Contains("Gamepad"))
             {
                 supportedDevicesNotConnected.Remove("Gamepad");
             }
