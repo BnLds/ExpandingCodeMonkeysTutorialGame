@@ -41,16 +41,10 @@ public class LobbyNavigationUI : MonoBehaviour
     {
         numberOfDirectChildren = container.childCount;
         OnLobbyNavigationLoaded?.Invoke(this, EventArgs.Empty);
-        Debug.Log("numberOfDirectChildren " + numberOfDirectChildren);
-        foreach(Transform child in container)
-        {
-            Debug.Log(child.name);
-        }
     }
 
     public Transform GetNextSibling(int siblingIndex)
     {
-        Debug.Log("siblingIndex " + siblingIndex);
         int nextSiblingIndex = (siblingIndex+1) % numberOfDirectChildren;
         Debug.Log(nextSiblingIndex);
         return container.GetChild(nextSiblingIndex).gameObject.activeSelf ? container.GetChild(nextSiblingIndex) : GetNextSibling(nextSiblingIndex);        

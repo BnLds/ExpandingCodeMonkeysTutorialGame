@@ -5,6 +5,7 @@ public class PlayerLoader : MonoBehaviour
     public static PlayerLoader Instance { get; private set; }
 
     [SerializeField] private Transform playerPrefab;
+    [SerializeField] private Transform[] spawnPoints;
 
     private void Awake()
     {
@@ -24,7 +25,7 @@ public class PlayerLoader : MonoBehaviour
         {
             if(allControlSchemesParameters[i].playerInputActions != null)
             {
-                ExtensionMethods.InstantiatePlayer(playerPrefab.gameObject, Vector3.zero, Quaternion.identity, allControlSchemesParameters[i].playerInputActions, allControlSchemesParameters[i].playerVisualMaterial);
+                ExtensionMethods.InstantiatePlayer(playerPrefab.gameObject, spawnPoints[i].position, spawnPoints[i].rotation, allControlSchemesParameters[i].playerInputActions, allControlSchemesParameters[i].playerVisualMaterial);
             }
         }
     }

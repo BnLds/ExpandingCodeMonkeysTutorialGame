@@ -27,7 +27,6 @@ public class CharacterSelectionSingleNavigationUI : LobbyElementsNavigationUI
         Selectable selectOnDown_ReadyButton = nextSkinButton;
         if(removePlayerButton.gameObject.activeSelf)
         {
-            Debug.Log("active");
             selectOnUp_NextSkinButton = removePlayerButton;
             selectOnDown_ReadyButton = removePlayerButton;
         }
