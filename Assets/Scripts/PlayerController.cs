@@ -15,14 +15,13 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
     [SerializeField] private LayerMask countersLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
 
-    
-
 
     private bool isWalking;
     private Vector3 lastInteractDirection;
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
     private PlayerInputActions playerInputActions;
+
 
     private void Start() 
     {
@@ -110,7 +109,6 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
         if(!canMove)
         {
             //cannot move towards direction
-
             //attempt only X movement
             Vector3 moveDirectionX = new Vector3(moveDirection.x, 0, 0).normalized;
             //Test if there is an input on x greater than .5f so it doesn't switch to diagonal moves too quickly with gamepads 
