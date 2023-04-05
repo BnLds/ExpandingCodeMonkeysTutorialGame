@@ -1,6 +1,7 @@
 using UnityEngine;
+using System.Collections.Generic;
 
-public class InstantiatePlayerExtensionMethod 
+public static class ExtensionMethods 
 {
     private const string HEAD_NAME = "Head";
     private const string BODY_NAME = "Body";

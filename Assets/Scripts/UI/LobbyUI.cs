@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -60,6 +61,8 @@ public class LobbyUI : MonoBehaviour
         public string unselectedControlName;
     }
 
+    public event EventHandler OnUIChanged;
+
     private SkinAvailability[] allSkinAvailability;
     private List<CharacterSelectionSingleUI> players;
     private List<NewPlayerSingleUI> newPlayerUIs;
@@ -94,6 +97,9 @@ public class LobbyUI : MonoBehaviour
 
         DisplayConnectDevices();
         InstantiateNewPlayerUIOnLoad();
+
+        //Invoking an event in Start can result in null reference, so we wait 1 frame before invoking
+        StartCoroutine(InvokeCoroutine());
     }
 
     private void InstantiateNewPlayerUIOnLoad()
@@ -120,7 +126,13 @@ public class LobbyUI : MonoBehaviour
         foreach(NewPlayerSingleUI newPlayerUI in newPlayerUIs)
         {
             newPlayerUI.OnAddNewPlayer += NewPlayerUI_OnAddNewPlayer;
-        }
+        }     
+    }
+
+    private IEnumerator InvokeCoroutine()
+    {
+        yield return new WaitForEndOfFrame();
+        OnUIChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void NewPlayerUI_OnAddNewPlayer(object sender, NewPlayerSingleUI.EventArgsOnAddNewPlayer e)
@@ -138,8 +150,17 @@ public class LobbyUI : MonoBehaviour
 
 
         e.transform.GetComponent<NewPlayerSingleUI>().OnAddNewPlayer -= NewPlayerUI_OnAddNewPlayer;
-        e.transform.gameObject.SetActive(false);
-        
+        if(e.transform == newPlayerUITemplate.transform)
+        {
+            e.transform.gameObject.SetActive(false);
+        }
+        else
+        {
+            Destroy(e.transform.gameObject);
+        }
+
+        // Wait 1 frame for the Destroy to act before firing event
+        StartCoroutine(InvokeCoroutine());
     }
 
     private void Update()
@@ -232,6 +253,9 @@ public class LobbyUI : MonoBehaviour
         newPlayerUI.gameObject.SetActive(true);
         newPlayerUIs.Add(newPlayerUI.GetComponent<NewPlayerSingleUI>());
         newPlayerUI.GetComponent<NewPlayerSingleUI>().OnAddNewPlayer += NewPlayerUI_OnAddNewPlayer;
+
+        // Wait 1 frame for the Destroy to act before firing event
+        StartCoroutine(InvokeCoroutine());
     }
 
     private void DisplayConnectDevices()

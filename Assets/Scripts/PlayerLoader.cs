@@ -24,7 +24,7 @@ public class PlayerLoader : MonoBehaviour
         {
             if(allControlSchemesParameters[i].playerInputActions != null)
             {
-                InstantiatePlayerExtensionMethod.InstantiatePlayer(playerPrefab.gameObject, Vector3.zero, Quaternion.identity, allControlSchemesParameters[i].playerInputActions, allControlSchemesParameters[i].playerVisualMaterial);
+                ExtensionMethods.InstantiatePlayer(playerPrefab.gameObject, Vector3.zero, Quaternion.identity, allControlSchemesParameters[i].playerInputActions, allControlSchemesParameters[i].playerVisualMaterial);
             }
         }
     }

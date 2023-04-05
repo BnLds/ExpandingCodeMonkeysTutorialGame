@@ -25,6 +25,7 @@ public class NewPlayerSingleUI : MonoBehaviour
     private void Awake()
     {
         addNewPlayerButton.onClick.AddListener(NotifyAddNewPlayer);
+        addNewPlayerButton.Select();
     }
 
     private void NotifyAddNewPlayer()

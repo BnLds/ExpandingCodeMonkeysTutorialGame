@@ -6,21 +6,21 @@ using UnityEngine.InputSystem.Users;
 using System.Linq;
 
 public struct ControlSchemeParameters
-    {
-        public InputControlScheme controlScheme;
-        public bool isAvailableForNewPlayer;
-        public PlayerInputActions playerInputActions;
-        public Material playerVisualMaterial;
+{
+    public InputControlScheme controlScheme;
+    public bool isAvailableForNewPlayer;
+    public PlayerInputActions playerInputActions;
+    public Material playerVisualMaterial;
 
 
     public ControlSchemeParameters(InputControlScheme controlScheme, bool isAvailableForNewPlayer, PlayerInputActions playerInputActions, Material playerVisualMaterial)
-        {
-            this.controlScheme = controlScheme;
-            this.isAvailableForNewPlayer = isAvailableForNewPlayer;
-            this.playerInputActions = playerInputActions;
-            this.playerVisualMaterial = playerVisualMaterial;
+    {
+        this.controlScheme = controlScheme;
+        this.isAvailableForNewPlayer = isAvailableForNewPlayer;
+        this.playerInputActions = playerInputActions;
+        this.playerVisualMaterial = playerVisualMaterial;
     }
-    }
+}
 
 public class GameControlsManager : MonoBehaviour
 {

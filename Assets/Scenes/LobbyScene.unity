@@ -994,6 +994,7 @@ GameObject:
   m_Component:
   - component: {fileID: 391675983}
   - component: {fileID: 391675984}
+  - component: {fileID: 391675985}
   m_Layer: 5
   m_Name: LobbyUI
   m_TagString: Untagged
@@ -1043,6 +1044,19 @@ MonoBehaviour:
   newPlayerUITemplate: {fileID: 716177893}
   container: {fileID: 941080956}
   connectControlText: {fileID: 275901644}
+--- !u!114 &391675985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391675982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf17dadecc5af4b4d99b33eb78b1defe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  container: {fileID: 941080956}
 --- !u!1 &503746235
 GameObject:
   m_ObjectHideFlags: 0
@@ -1053,6 +1067,7 @@ GameObject:
   m_Component:
   - component: {fileID: 503746236}
   - component: {fileID: 503746240}
+  - component: {fileID: 503746241}
   - component: {fileID: 503746238}
   - component: {fileID: 503746237}
   - component: {fileID: 503746239}
@@ -1166,6 +1181,25 @@ MonoBehaviour:
   nextControlButton: {fileID: 356890064}
   previousControlButton: {fileID: 1443559144}
   controlOptionText: {fileID: 1025468228}
+  removePlayerButton: {fileID: 1724337672}
+--- !u!114 &503746241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503746235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c597c841b067014da9196f42265384f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firstSelected: {fileID: 269461801}
+  nextSkinButton: {fileID: 1187391943}
+  previousSkinButton: {fileID: 1136114457}
+  readyButton: {fileID: 269461801}
+  nextControlButton: {fileID: 356890064}
+  previousControlButton: {fileID: 1443559144}
   removePlayerButton: {fileID: 1724337672}
 --- !u!1 &554654243
 GameObject:
@@ -1357,6 +1391,7 @@ GameObject:
   m_Component:
   - component: {fileID: 716177889}
   - component: {fileID: 716177893}
+  - component: {fileID: 716177894}
   - component: {fileID: 716177892}
   - component: {fileID: 716177891}
   - component: {fileID: 716177890}
@@ -1454,6 +1489,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 101a4fcc63098cc42a9b3e261054ff4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  addNewPlayerButton: {fileID: 1719057836}
+--- !u!114 &716177894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 716177888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b73f18975b217849bce496b5ef5a7ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firstSelected: {fileID: 1719057836}
   addNewPlayerButton: {fileID: 1719057836}
 --- !u!1 &886053703
 GameObject:
@@ -3789,7 +3838,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.13386647, b: 0.050980415, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -3822,7 +3871,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9433962, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.9716981, g: 0.9716981, b: 0.9716981, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

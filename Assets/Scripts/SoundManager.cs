@@ -35,10 +35,6 @@ public class SoundManager : MonoBehaviour
             DeliveryManager.Instance.OnRecipeSuccessed += DeliveryManager_OnRecipeSuccessed;
             DeliveryManager.Instance.OnRecipeFailed += DeliveryManager_OnRecipeFailed;
         }
-        else
-        {
-            Debug.Log("No DeliveryManager.Instance found. This is expected if the SoundManager is called from the Lobby Scene");
-        }
 
         CuttingCounter.OnAnyCut += CuttingCounter_OnAnyCut;
         BaseCounter.OnAnyObjectObjectPlacedHere += BaseCounter_OnAnyObjectObjectPlacedHere;
