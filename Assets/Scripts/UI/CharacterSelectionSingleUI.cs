@@ -223,7 +223,6 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     private void LobbyUI_OnControlOptionLocked(object sender, LobbyUI.EventArgsOnControlOptionLocked e)
     {
         availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
-
         if(e.origin != this.transform && currentControlOptionSelected == e.selectedControlName)
         {
             if(availableControls.Count != 0)
@@ -241,7 +240,6 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     {
         //Locked control option is now unlocked. availbleControls list needs to be updated
         availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
-
         if(state == State.UnableToSelect || e.origin == this.transform)
         {
             currentControlOptionSelected = e.unselectedControlName;

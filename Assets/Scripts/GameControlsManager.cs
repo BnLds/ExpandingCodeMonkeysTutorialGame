@@ -150,7 +150,7 @@ public class GameControlsManager : MonoBehaviour
         {
             for(int i = 0; i < allControlSchemesParameters.Length; i++)
             {
-                if(allControlSchemesParameters[i].controlScheme.SupportsDevice(connectedDevice))
+                if(allControlSchemesParameters[i].controlScheme.SupportsDevice(connectedDevice) && allControlSchemesParameters[i].isAvailableForNewPlayer)
                 {
                     availableControlSchemesWithConnectedDevices.Add(allControlSchemesParameters[i].controlScheme.bindingGroup);
                 }

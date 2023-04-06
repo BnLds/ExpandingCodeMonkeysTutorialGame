@@ -203,36 +203,34 @@ public class LobbyUI : MonoBehaviour
             origin = e.origin
         });
 
-        OnControlOptionSelected?.Invoke(this, new EventArgsOnControlOptionLocked
-        {
-            selectedControlName = e.controlOptionSelected,
-            origin = e.origin
-        });
-
         OnCharacterParametersSelected?.Invoke(this, new EventArgsOnCharacterParametersSelected
         {
             selectedControlName = e.controlOptionSelected,
             selectedSkinMaterial = skins.characterSkinSOList[e.currentSkinDisplayedIndex].Material
         });
 
+        OnControlOptionSelected?.Invoke(this, new EventArgsOnControlOptionLocked
+        {
+            selectedControlName = e.controlOptionSelected,
+            origin = e.origin
+        });
 
         numberOfPlayersReady++;
-
     }
 
     private void characterSelectionTemplate_OnPlayerNotReady(object sender, CharacterSelectionSingleUI.EventArgsOnPlayerNotReady e)
     {
         allSkinAvailability[e.currentSkinDisplayedIndex].isAvailable = true;
 
+        OnCharacterParametersUnselected?.Invoke(this, new EventArgsOnCharacterParametersUnselected
+        {
+            unselectedControlName = e.controlOptionSelected,
+        });
+
         OnControlOptionUnselected?.Invoke(this, new EventArgsOnControlOptionUnlocked
         {
             unselectedControlName = e.controlOptionSelected,
             origin = e.origin
-        });
-
-        OnCharacterParametersUnselected?.Invoke(this, new EventArgsOnCharacterParametersUnselected
-        {
-            unselectedControlName = e.controlOptionSelected,
         });
 
         numberOfPlayersReady--;
