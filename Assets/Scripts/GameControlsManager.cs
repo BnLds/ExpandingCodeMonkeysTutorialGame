@@ -10,14 +10,16 @@ public struct ControlSchemeParameters
     public InputControlScheme controlScheme;
     public bool isAvailableForNewPlayer;
     public PlayerInputActions playerInputActions;
+    public InputUser playerInputUser;
     public Material playerVisualMaterial;
 
 
-    public ControlSchemeParameters(InputControlScheme controlScheme, bool isAvailableForNewPlayer, PlayerInputActions playerInputActions, Material playerVisualMaterial)
+    public ControlSchemeParameters(InputControlScheme controlScheme, bool isAvailableForNewPlayer, PlayerInputActions playerInputActions, InputUser playerInputUser, Material playerVisualMaterial)
     {
         this.controlScheme = controlScheme;
         this.isAvailableForNewPlayer = isAvailableForNewPlayer;
         this.playerInputActions = playerInputActions;
+        this.playerInputUser = playerInputUser;
         this.playerVisualMaterial = playerVisualMaterial;
     }
 }
@@ -73,12 +75,7 @@ public class GameControlsManager : MonoBehaviour
 
     private void Start()
     {
-        //PlayerInputActions defaultPlayerInputActions = GameInput.Instance.GetDefaultPlayerInputActions();
-
-        
-
         //InputSystem.onDeviceChange += InputSystem_OnDeviceChange;
-
     }
 
     private void CreateAllControlSchemesParameters()
@@ -89,6 +86,7 @@ public class GameControlsManager : MonoBehaviour
             allControlSchemesParameters[i].controlScheme = defaultPlayerInputActions.controlSchemes[i];
             allControlSchemesParameters[i].isAvailableForNewPlayer = true;
             allControlSchemesParameters[i].playerInputActions = null;
+            allControlSchemesParameters[i].playerInputUser = new InputUser();
         }
     }
 
@@ -114,31 +112,28 @@ public class GameControlsManager : MonoBehaviour
         {
             if (allControlSchemesParameters[i].isAvailableForNewPlayer == false)
             {
-                PlayerInputActions newPlayerInputActions = new PlayerInputActions();
-                InputUser newInputUser = new InputUser();
+                allControlSchemesParameters[i].playerInputActions = new PlayerInputActions();
                 
                 foreach(InputDevice connectedDevice in connectedDevices)
                 {
                     if(allControlSchemesParameters[i].controlScheme.SupportsDevice(connectedDevice))
                     {
-                        newInputUser = InputUser.PerformPairingWithDevice(connectedDevice);
+                        allControlSchemesParameters[i].playerInputUser = InputUser.PerformPairingWithDevice(connectedDevice);
                     }
                 }
 
-                if (newInputUser.pairedDevices.Count == 0)
+                if (allControlSchemesParameters[i].playerInputUser.pairedDevices.Count == 0)
                 {
                     Debug.LogError("Trying to generate new PlayerInputActions but there is no relevant supported device connected");
                 }
 
-                newInputUser.AssociateActionsWithUser(newPlayerInputActions);
-                newInputUser.ActivateControlScheme(allControlSchemesParameters[i].controlScheme.bindingGroup);
-                newPlayerInputActions.Enable();
+                allControlSchemesParameters[i].playerInputUser.AssociateActionsWithUser(allControlSchemesParameters[i].playerInputActions);
+                allControlSchemesParameters[i].playerInputUser.ActivateControlScheme(allControlSchemesParameters[i].controlScheme.bindingGroup);
+                allControlSchemesParameters[i].playerInputActions.Enable();
 
                 numberOfPlayers++;
 
-                allControlSchemesParameters[i].playerInputActions = newPlayerInputActions;
-
-                GameInput.Instance.InitializePlayerInputActions(newPlayerInputActions);
+                GameInput.Instance.InitializePlayerInputActions(allControlSchemesParameters[i].playerInputActions);
             }
         }
     }
