@@ -108,6 +108,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         LobbyUI.Instance.OnControlOptionSelected += LobbyUI_OnControlOptionLocked;
         LobbyUI.Instance.OnControlOptionUnselected += LobbyUI_OnControlOptionUnlocked;
         CharacterSelectionSingleUI.OnPlayerRemoval += CharacterSelectionSingleUI_OnPlayerRemoval;
+        GameControlsManager.Instance.OnAvailableControlsChange += GameControlsManager_OnAvailableControlsChange;
 
         SkinAvailability[] allSkinsAvailability = LobbyUI.Instance.GetAllSkinsAvailability();
 
@@ -123,6 +124,16 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
         //Initialize Ready button to Selected on the EventSystem so it appears selected for gamepad.
         readyButton.Select();
+    }
+
+    private void GameControlsManager_OnAvailableControlsChange(object sender, EventArgs e)
+    {
+        availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
+        if (state == State.Ready)
+        {
+            TogglePlayerReady();
+        }
+        if(!availableControls.Contains(currentControlOptionDisplayed) && state != State.UnableToSelect) ShowNextControlOption();
     }
 
     private void OnDestroy()

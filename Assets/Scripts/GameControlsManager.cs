@@ -30,6 +30,8 @@ public class GameControlsManager : MonoBehaviour
 
     [SerializeField] private int numberOfPlayersMax = 3;
 
+    public event EventHandler OnAvailableControlsChange;
+
     private static ControlSchemeParameters[] allControlSchemesParameters;
     private List<InputDevice> connectedDevices;
     private List<string> availableControlSchemesWithConnectedDevices;
@@ -62,6 +64,29 @@ public class GameControlsManager : MonoBehaviour
         defaultPlayerInputActions = new PlayerInputActions();
 
         CreateAllControlSchemesParameters();
+    }
+
+    private void Start()
+    {
+        InputSystem.onDeviceChange += InputSystem_onDeviceChange;
+    }
+
+    private void InputSystem_onDeviceChange(InputDevice inputDevice, InputDeviceChange inputDeviceChange)
+    {
+        switch(inputDeviceChange)
+        {
+            default:
+                break;
+            case InputDeviceChange.Added:
+                connectedDevices = InputSystem.devices.ToList();
+                OnAvailableControlsChange?.Invoke(this, EventArgs.Empty);
+
+                break;
+            case InputDeviceChange.Removed:
+                connectedDevices = InputSystem.devices.ToList();
+                OnAvailableControlsChange?.Invoke(this, EventArgs.Empty);
+            break;
+        }
     }
 
     private void LobbyUI_OnCharacterParametersSelected(object sender, LobbyUI.EventArgsOnCharacterParametersSelected e)

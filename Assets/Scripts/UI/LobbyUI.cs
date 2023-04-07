@@ -94,12 +94,19 @@ public class LobbyUI : MonoBehaviour
     {
         characterSelectionUITemplate.OnPlayerReady += characterSelectionTemplate_OnPlayerReady;
         characterSelectionUITemplate.OnPlayerNotReady += characterSelectionTemplate_OnPlayerNotReady;
+        GameControlsManager.Instance.OnAvailableControlsChange += GameControlsManager_OnAvailableControlsChange;
+
 
         DisplayConnectDevices();
         InstantiateNewPlayerUIOnLoad();
 
         //Invoking an event in Start can result in null reference, so we wait 1 frame before invoking
         StartCoroutine(InvokeCoroutine());
+    }
+
+    private void GameControlsManager_OnAvailableControlsChange(object sender, EventArgs e)
+    {
+        DisplayConnectDevices();
     }
 
     private void InstantiateNewPlayerUIOnLoad()
