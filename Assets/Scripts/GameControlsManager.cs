@@ -37,6 +37,11 @@ public class GameControlsManager : MonoBehaviour
     private int numberOfPlayers;
     private PlayerInputActions defaultPlayerInputActions;
 
+    public void ResetDontDestroyOnLoadData()
+    {
+        Destroy(Instance);
+    }
+
     private void Awake()
     {
         if(Instance != null)
