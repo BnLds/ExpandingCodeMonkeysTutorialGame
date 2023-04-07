@@ -19,6 +19,8 @@ public class AudioClipRefSO : ScriptableObject
     public AudioClip[] click;
     public AudioClip[] addNewPlayer;
     public AudioClip[] removePlayer;
+    public AudioClip[] newControlConnected;
+
 
 
 

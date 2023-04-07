@@ -29,10 +29,15 @@ public class GameControlsManager : MonoBehaviour
     public static GameControlsManager Instance { get; private set; }
 
     public static event EventHandler OnAvailableControlsChange;
+    public static event EventHandler OnControlAddedPlaySound;
+    public static event EventHandler OnControlRemovedPlaySound;
     public static void ResetStaticData()
     {
         OnAvailableControlsChange = null;
+        OnControlAddedPlaySound = null;
+        OnControlRemovedPlaySound = null;
     }
+
 
     [SerializeField] private int numberOfPlayersMax = 3;
 
@@ -84,12 +89,13 @@ public class GameControlsManager : MonoBehaviour
             case InputDeviceChange.Added:
                 connectedDevices = InputSystem.devices.ToList();
                 OnAvailableControlsChange?.Invoke(this, EventArgs.Empty);
-
+                OnControlAddedPlaySound?.Invoke(this, EventArgs.Empty);
                 break;
             case InputDeviceChange.Removed:
                 connectedDevices = InputSystem.devices.ToList();
                 OnAvailableControlsChange?.Invoke(this, EventArgs.Empty);
-            break;
+                OnControlRemovedPlaySound?.Invoke(this, EventArgs.Empty);
+                break;
         }
     }
 

@@ -44,7 +44,31 @@ public class SoundManager : MonoBehaviour
         CharacterSelectionSingleUI.OnClick += CharacterSelectionSingleUI_OnClick;
         CharacterSelectionSingleUI.OnPlayerRemoval += CharacterSelectionSingleUI_OnPlayerRemoval;
         NewPlayerSingleUI.OnPlayerAdditon += NewPlayerSingleUI_OnPlayerAdditon;
+        GameControlsManager.OnControlAddedPlaySound += GameControlsManager_OnControlAddedPlaySound;
+        GameControlsManager.OnControlRemovedPlaySound += GameControlsManager_OnControlRemovedPlaySound;
 
+    }
+    
+    private void PlaySound(AudioClip audioClip, Vector3 position, float volume = 1f)
+    {
+        AudioSource.PlayClipAtPoint(audioClip, position, volume);
+    }
+
+    private void PlaySound(AudioClip[] audioClipArray, Vector3 position, float volumeMultiplier = 1f)
+    {
+        PlaySound(audioClipArray[UnityEngine.Random.Range(0, audioClipArray.Length)], position, volumeMultiplier * volume);
+    }
+
+    private void GameControlsManager_OnControlRemovedPlaySound(object sender, EventArgs e)
+    {
+        Camera camera = Camera.main;
+        PlaySound(audioClipRefsSO.removePlayer, camera.transform.position, volume = .5f);
+    }
+
+    private void GameControlsManager_OnControlAddedPlaySound(object sender, EventArgs e)
+    {
+        Camera camera = Camera.main;
+        PlaySound(audioClipRefsSO.newControlConnected, camera.transform.position, volume = .5f);
     }
 
     private void CharacterSelectionSingleUI_OnPlayerRemoval(object sender, EventArgs e)
@@ -106,18 +130,6 @@ public class SoundManager : MonoBehaviour
     {
         DeliveryCounter deliveryCounter = DeliveryCounter.Instance;
         PlaySound(audioClipRefsSO.deliverySuccess, deliveryCounter.transform.position);
-
-
-    }
-
-    private void PlaySound(AudioClip audioClip, Vector3 position, float volume = 1f)
-    {
-        AudioSource.PlayClipAtPoint(audioClip, position, volume);
-    }
-
-    private void PlaySound(AudioClip[] audioClipArray, Vector3 position, float volumeMultiplier = 1f)
-    {
-        PlaySound(audioClipArray[UnityEngine.Random.Range(0, audioClipArray.Length)], position, volumeMultiplier * volume);
     }
 
     public void PlayFoottepsSound(Vector3 position, float volume)

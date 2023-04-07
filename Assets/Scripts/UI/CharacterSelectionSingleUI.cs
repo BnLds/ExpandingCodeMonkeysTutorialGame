@@ -130,23 +130,6 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
     private void GameControlsManager_OnAvailableControlsChange(object sender, EventArgs e)
     {
-        /*UpdateAvailableControls();
-        if (state == State.Ready)
-        {
-            TogglePlayerReady();
-        }
-
-        if (!availableControls.Contains(currentControlOptionDisplayed) && state != State.UnableToSelect)
-        {
-            try
-            {
-                ShowNextControlOption();
-            }
-            catch(DivideByZeroException)
-            {
-                UpdateAvailableControls();
-            }
-        }*/
         //Update list first in case of new control connected
         UpdateAvailableControls();
 
@@ -161,8 +144,6 @@ public class CharacterSelectionSingleUI : MonoBehaviour
             
             state = State.UnableToSelect;
         }
-
-        
     }
 
 

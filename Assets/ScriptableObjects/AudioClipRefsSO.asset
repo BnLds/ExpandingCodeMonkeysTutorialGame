@@ -53,3 +53,5 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6728bf8b07482414e99ba965fdd022d8, type: 3}
   removePlayer:
   - {fileID: 8300000, guid: 4b70ec0f0afb9ac4ea7dfea07aca4eb4, type: 3}
+  newControlConnected:
+  - {fileID: 8300000, guid: 50205ffe58351d244bbcbd725dbfa802, type: 3}
