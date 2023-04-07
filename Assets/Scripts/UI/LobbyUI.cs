@@ -94,7 +94,7 @@ public class LobbyUI : MonoBehaviour
     {
         characterSelectionUITemplate.OnPlayerReady += characterSelectionTemplate_OnPlayerReady;
         characterSelectionUITemplate.OnPlayerNotReady += characterSelectionTemplate_OnPlayerNotReady;
-        GameControlsManager.Instance.OnAvailableControlsChange += GameControlsManager_OnAvailableControlsChange;
+        GameControlsManager.OnAvailableControlsChange += GameControlsManager_OnAvailableControlsChange;
 
 
         DisplayConnectDevices();

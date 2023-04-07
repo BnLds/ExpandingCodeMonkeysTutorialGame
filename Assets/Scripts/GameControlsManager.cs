@@ -28,9 +28,13 @@ public class GameControlsManager : MonoBehaviour
 {
     public static GameControlsManager Instance { get; private set; }
 
-    [SerializeField] private int numberOfPlayersMax = 3;
+    public static event EventHandler OnAvailableControlsChange;
+    public static void ResetStaticData()
+    {
+        OnAvailableControlsChange = null;
+    }
 
-    public event EventHandler OnAvailableControlsChange;
+    [SerializeField] private int numberOfPlayersMax = 3;
 
     private static ControlSchemeParameters[] allControlSchemesParameters;
     private List<InputDevice> connectedDevices;

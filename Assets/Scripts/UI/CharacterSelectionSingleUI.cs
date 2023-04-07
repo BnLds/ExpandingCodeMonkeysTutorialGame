@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -76,6 +77,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         currentOptionIndexDisplayed = 0;
         isStateUnableToSelectInitialized = false;
         isStateAbleToSelectInitialized = false;
+        availableControls = new List<string>();
 
         nextControlButton.onClick.AddListener(() =>
         {
@@ -108,7 +110,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         LobbyUI.Instance.OnControlOptionSelected += LobbyUI_OnControlOptionLocked;
         LobbyUI.Instance.OnControlOptionUnselected += LobbyUI_OnControlOptionUnlocked;
         CharacterSelectionSingleUI.OnPlayerRemoval += CharacterSelectionSingleUI_OnPlayerRemoval;
-        GameControlsManager.Instance.OnAvailableControlsChange += GameControlsManager_OnAvailableControlsChange;
+        GameControlsManager.OnAvailableControlsChange += GameControlsManager_OnAvailableControlsChange;
 
         SkinAvailability[] allSkinsAvailability = LobbyUI.Instance.GetAllSkinsAvailability();
 
@@ -118,7 +120,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         //allSkinsAvailability and LobbyUI.Instance.GetSkinsSO() have matching indeces 
         characterRawImage.texture = LobbyUI.Instance.GetSkinsSO()[currentSkinDisplayedIndex].texture;
 
-        availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
+        UpdateAvailableControls();
 
         state = State.AbleToSelect;
 
@@ -128,13 +130,41 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
     private void GameControlsManager_OnAvailableControlsChange(object sender, EventArgs e)
     {
-        availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
+        /*UpdateAvailableControls();
         if (state == State.Ready)
         {
             TogglePlayerReady();
         }
-        if(!availableControls.Contains(currentControlOptionDisplayed) && state != State.UnableToSelect) ShowNextControlOption();
+
+        if (!availableControls.Contains(currentControlOptionDisplayed) && state != State.UnableToSelect)
+        {
+            try
+            {
+                ShowNextControlOption();
+            }
+            catch(DivideByZeroException)
+            {
+                UpdateAvailableControls();
+            }
+        }*/
+        //Update list first in case of new control connected
+        UpdateAvailableControls();
+
+        if(state == State.Ready)
+        {
+            OnPlayerNotReady?.Invoke(this, new EventArgsOnPlayerNotReady
+            {
+                origin = this.transform,
+                currentSkinDisplayedIndex = currentSkinDisplayedIndex,
+                controlOptionSelected = currentControlOptionDisplayed
+            });
+            
+            state = State.UnableToSelect;
+        }
+
+        
     }
+
 
     private void OnDestroy()
     {
@@ -231,6 +261,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         readyButton.interactable = false;
         readyButtonText.text = "Unable to start";
         readyButtonText.color = Color.red;
+        currentOptionIndexDisplayed = 0;
         controlOptionText.text = "No more control options available!";
         previousControlButton.gameObject.SetActive(false);
         nextControlButton.gameObject.SetActive(false);
@@ -247,7 +278,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
     private void LobbyUI_OnControlOptionLocked(object sender, LobbyUI.EventArgsOnControlOptionLocked e)
     {
-        availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
+        UpdateAvailableControls();
         if(e.origin != this.transform && currentControlOptionDisplayed == e.selectedControlName)
         {
             if(availableControls.Count != 0)
@@ -264,10 +295,18 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     private void LobbyUI_OnControlOptionUnlocked(object sender, LobbyUI.EventArgsOnControlOptionUnlocked e)
     {
         //Locked control option is now unlocked. availbleControls list needs to be updated
-        availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
+        UpdateAvailableControls();
         if(state == State.UnableToSelect || e.origin == this.transform)
         {
-            currentControlOptionDisplayed = e.unselectedControlName;
+            if(availableControls.Contains(e.unselectedControlName))
+            {
+                currentControlOptionDisplayed = e.unselectedControlName;
+            }
+            else
+            {
+                //This situation happens if a control option was removed after the device was disconnected
+                ShowNextControlOption();
+            }
         }
         
         currentOptionIndexDisplayed = availableControls.IndexOf(currentControlOptionDisplayed);
@@ -344,8 +383,16 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
     private void ShowNextControlOption()
     {
-        currentOptionIndexDisplayed = (currentOptionIndexDisplayed + 1) % availableControls.Count;
-        UpdateControlOptionUI();
+        if(availableControls.Count != 0)
+        {
+            currentOptionIndexDisplayed = (currentOptionIndexDisplayed + 1) % availableControls.Count;
+            UpdateControlOptionUI();
+        }
+        else
+        {
+            state = State.UnableToSelect;
+        }
+        
     }
 
     private void ShowPreviousControlOption()
@@ -367,6 +414,11 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     {
         currentControlOptionDisplayed = availableControls[currentOptionIndexDisplayed];
         controlOptionText.text = currentControlOptionDisplayed;
+    }
+
+    private void UpdateAvailableControls()
+    {
+        availableControls = GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices();
     }
 
     private void ActPlayerRemoval()

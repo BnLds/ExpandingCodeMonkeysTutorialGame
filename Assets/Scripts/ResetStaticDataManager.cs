@@ -11,5 +11,6 @@ public class ResetStaticDataManager : MonoBehaviour
         NewPlayerSingleUI.ResetStaticData();
         LobbyNavigationUI.ResetStaticData();
         PlayerLoader.ResetStaticData();
+        GameControlsManager.ResetStaticData();
     }
 }
