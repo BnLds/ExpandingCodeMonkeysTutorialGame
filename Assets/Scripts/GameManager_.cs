@@ -1,16 +1,25 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.Users;
+using UnityEngine.InputSystem;
 
 public class GameManager_ : MonoBehaviour
 {
 
     public static GameManager_ Instance {get; private set;}
 
+    [SerializeField] private DeviceRemovedUI deviceRemovedUI;
+
     public event EventHandler OnStateChanged;
     public event EventHandler OnGamePaused;
     public event EventHandler OnGameUnpaused;
+    public event EventHandler<EventArgsOnDeviceLost> OnDeviceLost;
+    public class EventArgsOnDeviceLost : EventArgs
+    {
+        public string deviceName;
+    }
+    public event EventHandler OnPlayerDestroyed;
+    public event EventHandler OnDeviceRegained;
 
 
     private enum State
@@ -26,6 +35,7 @@ public class GameManager_ : MonoBehaviour
     [SerializeField] private float gamePlayingTimerMax = 60f;
     private float gamePlayingTimer;
     private bool isGamePaused = false;
+    private InputUser inputUserChanged;
 
 
 
@@ -40,7 +50,48 @@ public class GameManager_ : MonoBehaviour
     {
         GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
         GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
+        PlayerLoader.OnPlayerInstantiationCompleted += PlayerLoader_OnPlayerInstantiationCompleted;
+    }
 
+    private void PlayerLoader_OnPlayerInstantiationCompleted(object sender, EventArgs e)
+    {
+        InputUser.onChange += InputUser_OnChange;
+    }
+
+    private void InputUser_OnChange(InputUser inputUser, InputUserChange inputUserChange, InputDevice inputDevice)
+    {
+        Debug.Log(inputUser.controlScheme);
+        Debug.Log(inputUserChange);
+        Debug.Log(inputDevice);
+
+        if(inputUserChange == InputUserChange.DeviceLost)
+        {
+            OnDeviceLost?.Invoke(this, new EventArgsOnDeviceLost
+            {
+                deviceName = inputDevice.name
+            });
+
+            inputUserChanged = inputUser;
+
+            deviceRemovedUI.OnRemovePlayer += DeviceRemovedUI_OnRemovePlayer;
+        }
+
+        if(inputUserChange == InputUserChange.DeviceRegained && inputUserChanged == inputUser)
+        {
+            OnDeviceRegained?.Invoke(this, EventArgs.Empty);
+
+            deviceRemovedUI.OnRemovePlayer -= DeviceRemovedUI_OnRemovePlayer;
+        }
+    }
+
+    private void DeviceRemovedUI_OnRemovePlayer(object sender, EventArgs e)
+    {
+        int playerParametersIndex = Array.FindIndex(GameControlsManager.Instance.GetAllControlSchemeParameters(), parameters => parameters.controlScheme == inputUserChanged.controlScheme);
+        GameObject playerInstance = GameControlsManager.Instance.GetAllControlSchemeParameters()[playerParametersIndex].playerInstance;
+        Destroy(playerInstance);
+        OnPlayerDestroyed?.Invoke(this, EventArgs.Empty);
+
+        deviceRemovedUI.OnRemovePlayer -= DeviceRemovedUI_OnRemovePlayer;
     }
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)

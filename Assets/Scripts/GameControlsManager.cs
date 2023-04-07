@@ -11,14 +11,16 @@ public struct ControlSchemeParameters
     public bool isAvailableForNewPlayer;
     public PlayerInputActions playerInputActions;
     public Material playerVisualMaterial;
+    public GameObject playerInstance;
 
 
-    public ControlSchemeParameters(InputControlScheme controlScheme, bool isAvailableForNewPlayer, PlayerInputActions playerInputActions, Material playerVisualMaterial)
+    public ControlSchemeParameters(InputControlScheme controlScheme, bool isAvailableForNewPlayer, PlayerInputActions playerInputActions, Material playerVisualMaterial, GameObject playerInstance)
     {
         this.controlScheme = controlScheme;
         this.isAvailableForNewPlayer = isAvailableForNewPlayer;
         this.playerInputActions = playerInputActions;
         this.playerVisualMaterial = playerVisualMaterial;
+        this.playerInstance = playerInstance;
     }
 }
 
@@ -78,25 +80,10 @@ public class GameControlsManager : MonoBehaviour
             allControlSchemesParameters[i].controlScheme = defaultPlayerInputActions.controlSchemes[i];
             allControlSchemesParameters[i].isAvailableForNewPlayer = true;
             allControlSchemesParameters[i].playerInputActions = null;
+            allControlSchemesParameters[i].playerInstance = null;
         }
     }
 
-    /*private void InputSystem_OnDeviceChange(InputDevice device, InputDeviceChange change)
-    {
-        switch (change)
-        {
-            case InputDeviceChange.Added:
-                Debug.Log("Device added: " + device);
-                break;
-            case InputDeviceChange.Removed:
-                Debug.Log("Device removed: " + device);
-                break;
-            case InputDeviceChange.ConfigurationChanged:
-                Debug.Log("Device configuration changed: " + device);
-                break;
-        }
-    }
-    */
     public void GeneratePlayerInputActions()
     {
         for (int i = 0; i < allControlSchemesParameters.Length; i++)

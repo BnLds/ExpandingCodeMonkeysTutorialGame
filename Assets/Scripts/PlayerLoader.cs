@@ -1,8 +1,15 @@
 using UnityEngine;
+using System;
 
 public class PlayerLoader : MonoBehaviour
 {
     public static PlayerLoader Instance { get; private set; }
+
+    public static event EventHandler OnPlayerInstantiationCompleted;
+    public static void ResetStaticData()
+    {
+        OnPlayerInstantiationCompleted = null;
+    }
 
     [SerializeField] private Transform playerPrefab;
     [SerializeField] private Transform[] spawnPoints;
@@ -25,8 +32,11 @@ public class PlayerLoader : MonoBehaviour
         {
             if(allControlSchemesParameters[i].playerInputActions != null)
             {
-                ExtensionMethods.InstantiatePlayer(playerPrefab.gameObject, spawnPoints[i].position, spawnPoints[i].rotation, allControlSchemesParameters[i].playerInputActions, allControlSchemesParameters[i].playerVisualMaterial);
+                GameObject playerInstance = ExtensionMethods.InstantiatePlayer(playerPrefab.gameObject, spawnPoints[i].position, spawnPoints[i].rotation, allControlSchemesParameters[i].playerInputActions, allControlSchemesParameters[i].playerVisualMaterial);
+                allControlSchemesParameters[i].playerInstance = playerInstance;
             }
         }
+
+        OnPlayerInstantiationCompleted?.Invoke(this, EventArgs.Empty);
     }
 }
