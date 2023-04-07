@@ -21,31 +21,23 @@ public class DeviceRemovedUI : MonoBehaviour
     private void Start()
     {
         GameManager_.Instance.OnDeviceLost += GameManager_OnDeviceLost;
-        GameManager_.Instance.OnDeviceRegained += GameManager_OnDeviceRegained;
-        GameManager_.Instance.OnPlayerDestroyed += GameManager_OnPlayerDestroyed;
+        GameManager_.Instance.OnStateChanged += GameManager_OnStateChanged;
 
         Hide();
     }
 
-    private void GameManager_OnDeviceRegained(object sender, EventArgs e)
+    private void GameManager_OnStateChanged(object sender, EventArgs e)
     {
-        Time.timeScale = 1f;
-        Hide();
-    }
-
-    private void GameManager_OnPlayerDestroyed(object sender, EventArgs e)
-    {
-        Time.timeScale = 1f;
-        Hide();
+        if(GameManager_.Instance.IsCountdownToRestartActive())
+        {
+            Hide();
+        }
     }
 
     private void GameManager_OnDeviceLost(object sender, GameManager_.EventArgsOnDeviceLost e)
     {
         Show();
-        Time.timeScale = 0f;
-
         deviceRemovedText.text = e.deviceName;
-
     }
 
     private void RemovePlayer()

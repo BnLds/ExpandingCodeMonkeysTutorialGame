@@ -18,9 +18,6 @@ public class GameManager_ : MonoBehaviour
     {
         public string deviceName;
     }
-    public event EventHandler OnPlayerDestroyed;
-    public event EventHandler OnDeviceRegained;
-
 
     private enum State
     {
@@ -28,10 +25,14 @@ public class GameManager_ : MonoBehaviour
         CountdownToStart,
         GamePlaying,
         GameOver,
+        CountdownToRestart
     }
 
     private State state;
     private float countdownToStartTimer = 3f;
+    private float countdownToRestartTimer;
+    private float countdownToRestartTimerMax = 3f;
+
     [SerializeField] private float gamePlayingTimerMax = 60f;
     private float gamePlayingTimer;
     private bool isGamePaused = false;
@@ -53,47 +54,6 @@ public class GameManager_ : MonoBehaviour
         PlayerLoader.OnPlayerInstantiationCompleted += PlayerLoader_OnPlayerInstantiationCompleted;
     }
 
-    private void PlayerLoader_OnPlayerInstantiationCompleted(object sender, EventArgs e)
-    {
-        InputUser.onChange += InputUser_OnChange;
-    }
-
-    private void InputUser_OnChange(InputUser inputUser, InputUserChange inputUserChange, InputDevice inputDevice)
-    {
-        Debug.Log(inputUser.controlScheme);
-        Debug.Log(inputUserChange);
-        Debug.Log(inputDevice);
-
-        if(inputUserChange == InputUserChange.DeviceLost)
-        {
-            OnDeviceLost?.Invoke(this, new EventArgsOnDeviceLost
-            {
-                deviceName = inputDevice.name
-            });
-
-            inputUserChanged = inputUser;
-
-            deviceRemovedUI.OnRemovePlayer += DeviceRemovedUI_OnRemovePlayer;
-        }
-
-        if(inputUserChange == InputUserChange.DeviceRegained && inputUserChanged == inputUser)
-        {
-            OnDeviceRegained?.Invoke(this, EventArgs.Empty);
-
-            deviceRemovedUI.OnRemovePlayer -= DeviceRemovedUI_OnRemovePlayer;
-        }
-    }
-
-    private void DeviceRemovedUI_OnRemovePlayer(object sender, EventArgs e)
-    {
-        int playerParametersIndex = Array.FindIndex(GameControlsManager.Instance.GetAllControlSchemeParameters(), parameters => parameters.controlScheme == inputUserChanged.controlScheme);
-        GameObject playerInstance = GameControlsManager.Instance.GetAllControlSchemeParameters()[playerParametersIndex].playerInstance;
-        Destroy(playerInstance);
-        OnPlayerDestroyed?.Invoke(this, EventArgs.Empty);
-
-        deviceRemovedUI.OnRemovePlayer -= DeviceRemovedUI_OnRemovePlayer;
-    }
-
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
         if(state == State.WaitingToStart)
@@ -105,7 +65,7 @@ public class GameManager_ : MonoBehaviour
 
     private void GameInput_OnPauseAction(object sender, EventArgs e)
     {
-        TogglePauseGame();
+        TogglePauseMenu();
     }
 
     private void Update()
@@ -134,13 +94,69 @@ public class GameManager_ : MonoBehaviour
                 {
                     state = State.GameOver;
                     OnStateChanged?.Invoke(this, EventArgs.Empty);
+                }
+                break;
 
+            case State.CountdownToRestart:
+                countdownToRestartTimer -= Time.deltaTime;
+                
+                if(countdownToRestartTimer < 0)
+                {
+                    state = State.GamePlaying;
+                
+                    OnStateChanged?.Invoke(this, EventArgs.Empty);
                 }
                 break;
             
             case State.GameOver:
                 break;
         }
+    }
+
+    private void PlayerLoader_OnPlayerInstantiationCompleted(object sender, EventArgs e)
+    {
+        InputUser.onChange += InputUser_OnChange;
+    }
+
+    private void InputUser_OnChange(InputUser inputUser, InputUserChange inputUserChange, InputDevice inputDevice)
+    {
+        if(inputUserChange == InputUserChange.DeviceLost)
+        {
+            TogglePauseDeviceRemoved();
+
+            OnDeviceLost?.Invoke(this, new EventArgsOnDeviceLost
+            {
+                deviceName = inputDevice.name
+            });
+
+            inputUserChanged = inputUser;
+
+            deviceRemovedUI.OnRemovePlayer += DeviceRemovedUI_OnRemovePlayer;
+        }
+
+        if(inputUserChange == InputUserChange.DeviceRegained && inputUserChanged == inputUser)
+        {
+            countdownToRestartTimer = countdownToRestartTimerMax;
+            TogglePauseDeviceRemoved();
+            state = State.CountdownToRestart;
+            OnStateChanged?.Invoke(this, EventArgs.Empty);
+
+            deviceRemovedUI.OnRemovePlayer -= DeviceRemovedUI_OnRemovePlayer;
+        }
+    }
+
+    private void DeviceRemovedUI_OnRemovePlayer(object sender, EventArgs e)
+    {
+        int playerParametersIndex = Array.FindIndex(GameControlsManager.Instance.GetAllControlSchemeParameters(), parameters => parameters.controlScheme == inputUserChanged.controlScheme);
+        GameObject playerInstance = GameControlsManager.Instance.GetAllControlSchemeParameters()[playerParametersIndex].playerInstance;
+        Destroy(playerInstance);
+
+        countdownToRestartTimer = countdownToRestartTimerMax;
+        TogglePauseDeviceRemoved();
+        state = State.CountdownToRestart;
+        OnStateChanged?.Invoke(this, EventArgs.Empty);
+
+        deviceRemovedUI.OnRemovePlayer -= DeviceRemovedUI_OnRemovePlayer;
     }
 
     public bool IsGamePlaying()
@@ -153,9 +169,19 @@ public class GameManager_ : MonoBehaviour
         return (state == State.CountdownToStart);
     }
 
+    public bool IsCountdownToRestartActive()
+    {
+        return (state == State.CountdownToRestart);
+    }
+
     public float GetCountdownToStartTimer()
     {
         return countdownToStartTimer;
+    }
+
+    public float GetCountdownToRestartTimer()
+    {
+        return countdownToRestartTimer;
     }
 
     public bool IsGameOver()
@@ -168,19 +194,31 @@ public class GameManager_ : MonoBehaviour
         return (1 - gamePlayingTimer/gamePlayingTimerMax);
     }
 
-    public void TogglePauseGame()
+    public void TogglePauseMenu()
     {
         isGamePaused = !isGamePaused;
         if(isGamePaused)
         {
-        Time.timeScale = 0f;
-        OnGamePaused?.Invoke(this, EventArgs.Empty);
+            Time.timeScale = 0f;
+            OnGamePaused?.Invoke(this, EventArgs.Empty);
         }
         else
         {
-        Time.timeScale = 1f;
-        OnGameUnpaused?.Invoke(this, EventArgs.Empty);
+            Time.timeScale = 1f;
+            OnGameUnpaused?.Invoke(this, EventArgs.Empty);
         }
     }
 
+    public void TogglePauseDeviceRemoved()
+    {
+        isGamePaused = !isGamePaused;
+        if(isGamePaused)
+        {
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+        }
+    }
 }

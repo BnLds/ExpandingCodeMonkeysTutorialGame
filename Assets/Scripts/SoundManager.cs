@@ -23,7 +23,6 @@ public class SoundManager : MonoBehaviour
             Instance = this;
         }
         
-
         float defaultVolume = 1f;
         volume = PlayerPrefs.GetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, defaultVolume);
     }
@@ -47,6 +46,11 @@ public class SoundManager : MonoBehaviour
         GameControlsManager.OnControlAddedPlaySound += GameControlsManager_OnControlAddedPlaySound;
         GameControlsManager.OnControlRemovedPlaySound += GameControlsManager_OnControlRemovedPlaySound;
 
+    }
+    private void OnDestroy()
+    {
+        GameControlsManager.OnControlAddedPlaySound -= GameControlsManager_OnControlAddedPlaySound;
+        GameControlsManager.OnControlRemovedPlaySound -= GameControlsManager_OnControlRemovedPlaySound;
     }
     
     private void PlaySound(AudioClip audioClip, Vector3 position, float volume = 1f)

@@ -153,6 +153,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         LobbyUI.Instance.OnControlOptionSelected -= LobbyUI_OnControlOptionLocked;
         LobbyUI.Instance.OnControlOptionUnselected -= LobbyUI_OnControlOptionUnlocked;
         CharacterSelectionSingleUI.OnPlayerRemoval -= CharacterSelectionSingleUI_OnPlayerRemoval;
+        GameControlsManager.OnAvailableControlsChange -= GameControlsManager_OnAvailableControlsChange;
     }
 
     private void Update()

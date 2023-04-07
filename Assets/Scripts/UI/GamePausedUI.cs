@@ -19,7 +19,7 @@ public class GamePausedUI : MonoBehaviour
 
         resumeButton.onClick.AddListener(() => 
         {
-            GameManager_.Instance.TogglePauseGame();
+            GameManager_.Instance.TogglePauseMenu();
         });
 
         optionsButton.onClick.AddListener(() => 

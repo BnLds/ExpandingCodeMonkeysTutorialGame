@@ -19,13 +19,25 @@ public class GameStartCountdownUI : MonoBehaviour
     private void Start()
     {
         GameManager_.Instance.OnStateChanged += GameManager_OnStateChanged;
-
         Hide();
+    }
+
+    private void OnDestroy()
+    {
+        GameManager_.Instance.OnStateChanged -= GameManager_OnStateChanged;
     }
 
     private void Update()
     {
-        int countdownNumber = Mathf.CeilToInt(GameManager_.Instance.GetCountdownToStartTimer());
+        int countdownNumber;
+        if(GameManager_.Instance.IsCountdownToStartActive())
+        {
+            countdownNumber = Mathf.CeilToInt(GameManager_.Instance.GetCountdownToStartTimer());
+        }
+        else
+        {
+            countdownNumber = Mathf.CeilToInt(GameManager_.Instance.GetCountdownToRestartTimer());
+        }
         countdownText.text = countdownNumber.ToString();
 
         if(previousCountdownNumber != countdownNumber)
@@ -38,7 +50,7 @@ public class GameStartCountdownUI : MonoBehaviour
 
     private void GameManager_OnStateChanged(object sender, EventArgs e)
     {
-        if(GameManager_.Instance.IsCountdownToStartActive())
+        if(GameManager_.Instance.IsCountdownToStartActive() || GameManager_.Instance.IsCountdownToRestartActive())
         {
             Show();
         }

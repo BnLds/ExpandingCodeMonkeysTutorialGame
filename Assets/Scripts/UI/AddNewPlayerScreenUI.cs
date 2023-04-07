@@ -32,7 +32,7 @@ public class AddNewPlayerScreenUI : MonoBehaviour
 
     private void Start()
     {
-        GameManager_.Instance.TogglePauseGame();
+        GameManager_.Instance.TogglePauseMenu();
 
         UpdateVisual();        
     }
@@ -161,14 +161,14 @@ public class AddNewPlayerScreenUI : MonoBehaviour
 
     private void Hide()
     {
-        GameManager_.Instance.TogglePauseGame();
+        GameManager_.Instance.TogglePauseMenu();
         gameObject.SetActive(false);
     }
 
     public void ShowAndUpdateVisual()
     {
         gameObject.SetActive(true);
-        GameManager_.Instance.TogglePauseGame();
+        GameManager_.Instance.TogglePauseMenu();
         UpdateVisual();
     }
 }

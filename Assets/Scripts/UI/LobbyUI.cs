@@ -104,6 +104,11 @@ public class LobbyUI : MonoBehaviour
         StartCoroutine(InvokeCoroutine());
     }
 
+    private void OnDestroy()
+    {
+        GameControlsManager.OnAvailableControlsChange -= GameControlsManager_OnAvailableControlsChange;
+    }
+
     private void GameControlsManager_OnAvailableControlsChange(object sender, EventArgs e)
     {
         DisplayConnectDevices();
