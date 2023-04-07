@@ -63,7 +63,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
 
     private int currentSkinDisplayedIndex;
     private int currentOptionIndexDisplayed;
-    private string currentControlOptionSelected;
+    private string currentControlOptionDisplayed;
     private State state;
     private bool isStateUnableToSelectInitialized;
     private bool isStateAbleToSelectInitialized;
@@ -74,15 +74,29 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     private void Awake()
     {
         currentOptionIndexDisplayed = 0;
-
-        nextControlButton.onClick.AddListener(ShowNextControlOption);
-        previousControlButton.onClick.AddListener(ShowPreviousControlOption);
-
         isStateUnableToSelectInitialized = false;
         isStateAbleToSelectInitialized = false;
 
-        nextSkinButton.onClick.AddListener(ShowNextSkin);
-        previousSkinButton.onClick.AddListener(ShowPreviousSkin);
+        nextControlButton.onClick.AddListener(() =>
+        {
+            ShowNextControlOption();
+            OnClick?.Invoke(this, EventArgs.Empty);
+        });
+        previousControlButton.onClick.AddListener( () =>
+        {
+            ShowPreviousControlOption();
+            OnClick?.Invoke(this, EventArgs.Empty);
+        });
+        nextSkinButton.onClick.AddListener( () => 
+            {
+                ShowNextSkin();
+                OnClick?.Invoke(this, EventArgs.Empty);
+            });
+        previousSkinButton.onClick.AddListener( () => 
+            {
+                ShowPreviousSkin();
+                OnClick?.Invoke(this, EventArgs.Empty);
+            });
         readyButton.onClick.AddListener(TogglePlayerReady);
         removePlayerButton.onClick.AddListener(ActPlayerRemoval);
 
@@ -171,7 +185,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
             {
                 origin = this.transform,
                 currentSkinDisplayedIndex = currentSkinDisplayedIndex,
-                controlOptionSelected = currentControlOptionSelected
+                controlOptionSelected = currentControlOptionDisplayed
             });
 
             OnReadySelection?.Invoke(this, EventArgs.Empty);
@@ -185,7 +199,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
             {
                 origin = this.transform,
                 currentSkinDisplayedIndex = currentSkinDisplayedIndex,
-                controlOptionSelected = currentControlOptionSelected
+                controlOptionSelected = currentControlOptionDisplayed
             });
 
             OnReadyUnselection?.Invoke(this, EventArgs.Empty);
@@ -223,7 +237,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     private void LobbyUI_OnControlOptionLocked(object sender, LobbyUI.EventArgsOnControlOptionLocked e)
     {
         availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
-        if(e.origin != this.transform && currentControlOptionSelected == e.selectedControlName)
+        if(e.origin != this.transform && currentControlOptionDisplayed == e.selectedControlName)
         {
             if(availableControls.Count != 0)
             {
@@ -232,7 +246,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         }
         else
         {
-            currentOptionIndexDisplayed = availableControls.IndexOf(currentControlOptionSelected);
+            currentOptionIndexDisplayed = availableControls.IndexOf(currentControlOptionDisplayed);
         }
     }
 
@@ -242,10 +256,10 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         availableControls = new List<string> (GameControlsManager.Instance.GetAvailableControlSchemesWithConnectedDevices());
         if(state == State.UnableToSelect || e.origin == this.transform)
         {
-            currentControlOptionSelected = e.unselectedControlName;
+            currentControlOptionDisplayed = e.unselectedControlName;
         }
         
-        currentOptionIndexDisplayed = availableControls.IndexOf(currentControlOptionSelected);
+        currentOptionIndexDisplayed = availableControls.IndexOf(currentControlOptionDisplayed);
     }
 
     private void LobbyUI_OnSkinLocked(object sender, LobbyUI.EventArgsOnSkinLocked e)
@@ -297,8 +311,6 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         }
 
         characterRawImage.texture = LobbyUI.Instance.GetSkinsSO()[currentSkinDisplayedIndex].texture;
-
-        OnClick?.Invoke(this, EventArgs.Empty);
     }
 
     private void ShowPreviousSkin()
@@ -317,16 +329,12 @@ public class CharacterSelectionSingleUI : MonoBehaviour
             }
         }
         characterRawImage.texture = LobbyUI.Instance.GetSkinsSO()[currentSkinDisplayedIndex].texture;
-
-        OnClick?.Invoke(this, EventArgs.Empty);
     }
 
     private void ShowNextControlOption()
     {
         currentOptionIndexDisplayed = (currentOptionIndexDisplayed + 1) % availableControls.Count;
         UpdateControlOptionUI();
-
-        OnClick?.Invoke(this, EventArgs.Empty);
     }
 
     private void ShowPreviousControlOption()
@@ -342,14 +350,12 @@ public class CharacterSelectionSingleUI : MonoBehaviour
         }
 
         UpdateControlOptionUI();
-
-        OnClick?.Invoke(this, EventArgs.Empty);
     }
 
     private void UpdateControlOptionUI()
     {
-        currentControlOptionSelected = availableControls[currentOptionIndexDisplayed];
-        controlOptionText.text = currentControlOptionSelected;
+        currentControlOptionDisplayed = availableControls[currentOptionIndexDisplayed];
+        controlOptionText.text = currentControlOptionDisplayed;
     }
 
     private void ActPlayerRemoval()
@@ -360,7 +366,7 @@ public class CharacterSelectionSingleUI : MonoBehaviour
             {
                 origin = this.transform,
                 currentSkinDisplayedIndex = currentSkinDisplayedIndex,
-                controlOptionSelected = currentControlOptionSelected
+                controlOptionSelected = currentControlOptionDisplayed
             });
         }
         
