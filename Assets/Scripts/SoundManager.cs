@@ -66,43 +66,43 @@ public class SoundManager : MonoBehaviour
     private void GameControlsManager_OnControlRemovedPlaySound(object sender, EventArgs e)
     {
         Camera camera = Camera.main;
-        PlaySound(audioClipRefsSO.removePlayer, camera.transform.position, volume = .5f);
+        PlaySound(audioClipRefsSO.removePlayer, camera.transform.position, volume = .4f);
     }
 
     private void GameControlsManager_OnControlAddedPlaySound(object sender, EventArgs e)
     {
         Camera camera = Camera.main;
-        PlaySound(audioClipRefsSO.newControlConnected, camera.transform.position, volume = .5f);
+        PlaySound(audioClipRefsSO.newControlConnected, camera.transform.position, volume = .4f);
     }
 
     private void CharacterSelectionSingleUI_OnPlayerRemoval(object sender, EventArgs e)
     {
         Camera camera = Camera.main;
-        PlaySound(audioClipRefsSO.removePlayer, camera.transform.position, volume = .5f);
+        PlaySound(audioClipRefsSO.removePlayer, camera.transform.position, volume = .4f);
     }
 
     private void NewPlayerSingleUI_OnPlayerAdditon(object sender, EventArgs e)
     {
         Camera camera = Camera.main;
-        PlaySound(audioClipRefsSO.addNewPlayer, camera.transform.position, volume = .5f);
+        PlaySound(audioClipRefsSO.addNewPlayer, camera.transform.position, volume = .4f);
     }
 
     private void CharacterSelectionSingleUI_OnClick(object sender, EventArgs e)
     {
         Camera camera = Camera.main;
-        PlaySound(audioClipRefsSO.click, camera.transform.position, volume = .5f);
+        PlaySound(audioClipRefsSO.click, camera.transform.position, volume = .4f);
     }
 
     private void CharacterSelectionSingleUI_OnReadyUnselection(object sender, EventArgs e)
     {
         Camera camera = Camera.main;
-        PlaySound(audioClipRefsSO.cancel, camera.transform.position, volume = .5f);
+        PlaySound(audioClipRefsSO.cancel, camera.transform.position, volume = .4f);
     }
 
     private void CharacterSelectionSingleUI_OnReadySelection(object sender, EventArgs e)
     {
         Camera camera = Camera.main;
-        PlaySound(audioClipRefsSO.validation, camera.transform.position, volume = .5f);
+        PlaySound(audioClipRefsSO.validation, camera.transform.position, volume = .4f);
     }
 
     private void TrashCounter_OnAnyObjectTrashed(object sender, EventArgs e)

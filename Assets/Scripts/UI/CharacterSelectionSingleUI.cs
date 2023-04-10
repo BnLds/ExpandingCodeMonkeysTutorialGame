@@ -254,7 +254,14 @@ public class CharacterSelectionSingleUI : MonoBehaviour
     {
         if(state == State.Ready)
         {
-            TogglePlayerReady();
+            state = State.AbleToSelect;
+            
+            OnPlayerNotReady?.Invoke(this, new EventArgsOnPlayerNotReady
+            {
+                origin = this.transform,
+                currentSkinDisplayedIndex = currentSkinDisplayedIndex,
+                controlOptionSelected = currentControlOptionDisplayed
+            });
         }
     }
 
