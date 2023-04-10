@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -41,6 +39,7 @@ public class GameInput : MonoBehaviour
         Interact_Arrows,
         Interact_Alt_Arrows,
         Pause,
+        Pause_Alt_Arrows,
         Gamepad_Interact,
         Gamepad_Interact_Alternate,
         Gamepad_Pause
@@ -157,6 +156,8 @@ public class GameInput : MonoBehaviour
                 return (defaultPlayerInputActions.Player.InteractAlternate.bindings[0].ToDisplayString());
             case Binding.Pause:
                 return (defaultPlayerInputActions.Player.Pause.bindings[0].ToDisplayString());
+            case Binding.Pause_Alt_Arrows:
+                return (defaultPlayerInputActions.Player.Pause.bindings[2].ToDisplayString());
             case Binding.Move_Up_WASD:
                 return (defaultPlayerInputActions.Player.Move.bindings[1].ToDisplayString());
             case Binding.Move_Down_WASD:
@@ -224,6 +225,10 @@ public class GameInput : MonoBehaviour
             case Binding.Pause:
                 inputAction = defaultPlayerInputActions.Player.Pause;
                 bindingIndex = 0;
+                break;
+            case Binding.Pause_Alt_Arrows:
+                inputAction = defaultPlayerInputActions.Player.Pause;
+                bindingIndex = 2;
                 break;
             case Binding.Move_Up_Arrows:
                 inputAction = defaultPlayerInputActions.Player.Move;

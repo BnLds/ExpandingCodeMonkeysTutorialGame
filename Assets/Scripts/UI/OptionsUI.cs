@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine;
@@ -96,7 +94,7 @@ public class OptionsUI : MonoBehaviour
         moveRightArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Move_Right_Arrows);});
         interactArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact_Arrows);});
         interactAltArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Interact_Alt_Arrows);});
-        pauseArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Pause);});
+        pauseArrowsButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Pause_Alt_Arrows);});
 
         gamepadInteractButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Gamepad_Interact);});
         gamepadInteractAltButton.onClick.AddListener(() => {RebindBinding(GameInput.Binding.Gamepad_Interact_Alternate);});
@@ -138,7 +136,7 @@ public class OptionsUI : MonoBehaviour
         moveRightArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Right_Arrows);
         interactArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Interact_Arrows);
         interactAltArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Interact_Alt_Arrows);
-        pauseArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Pause);
+        pauseArrowsText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Pause_Alt_Arrows);
 
         gamepadInteractText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_Interact);
         gamepadInteractAltText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Gamepad_Interact_Alternate);
